@@ -1,0 +1,22 @@
+apply plugin: "groovy"
+apply plugin: "eclipse"
+
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+   
+   groovy localGroovy()
+   compile gradleApi()
+   compile "junit:junit:4.8.1"
+   
+   compile "org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final"
+   compile "org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final"
+   
+   compile "org.jboss.arquillian.container:arquillian-jetty-embedded-7:1.0.0.CR1"
+   compile "org.eclipse.jetty:jetty-webapp:8.1.7.v20120910"
+   compile "org.eclipse.jetty:jetty-plus:8.1.7.v20120910"
+}
