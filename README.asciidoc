@@ -1,6 +1,8 @@
 Gradle Arquillian plugin
 ========================
 
+image:http://www.jboss.org/dms/jbossway/carousel_arquillian_logo.png[Arquillian Logo]
+
 Gradle plugin for handling container control and deployment lifecycle.
 
 == Usage
