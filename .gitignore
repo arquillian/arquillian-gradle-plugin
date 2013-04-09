@@ -2,17 +2,15 @@
 .project
 .classpath
 .settings/
+bin
 
 # IntelliJ
 *.iml
 *.ipr
 *.iws
 .idea
+out
 
-# Maven
-target/
-
-#Gradle
+# Gradle
 .gradle
 build
-bin
