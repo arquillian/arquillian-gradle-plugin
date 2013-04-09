@@ -15,15 +15,11 @@
  */
 package org.jboss.arquillian.gradle.task
 
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.client.container.LifecycleException
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
-
 /**
  * Arquillian stop task.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 class ArquillianStop extends ArquillianTask {
     ArquillianStop() {
@@ -40,9 +36,8 @@ class ArquillianStop extends ArquillianTask {
      * {@inheritDoc}
      */
     @Override
-    void perform(Manager manager, Container container) throws LifecycleException {
+    void perform() {
         logger.info 'Stopping Arquillian container.'
-        ArquillianContainerManager arquillianContainerManager = new ArquillianContainerManager()
-        arquillianContainerManager.stop(manager, container)
+        containerManager.stop()
     }
 }

@@ -17,15 +17,12 @@ package org.jboss.arquillian.gradle.task
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.InputFile
-import org.jboss.shrinkwrap.api.Archive
-import org.jboss.shrinkwrap.api.GenericArchive
-import org.jboss.shrinkwrap.api.ShrinkWrap
-import org.jboss.shrinkwrap.api.importer.ZipImporter
 
 /**
  * Arquillian task that handles a deployable.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 abstract class ArquillianDeployableTask extends ArquillianTask {
     /**
@@ -49,14 +46,5 @@ abstract class ArquillianDeployableTask extends ArquillianTask {
         else {
             logger.info "Deploying artifact '${getDeployable().canonicalPath}' to container."
         }
-    }
-
-    /**
-     * Creates deployable archive.
-     *
-     * @return Deployable archive
-     */
-    Archive<GenericArchive> createDeployableArchive() {
-        ShrinkWrap.create(ZipImporter, getDeployable().name).importFrom(getDeployable()).as(GenericArchive)
     }
 }

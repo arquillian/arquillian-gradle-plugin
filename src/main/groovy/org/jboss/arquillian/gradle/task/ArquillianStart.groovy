@@ -15,15 +15,11 @@
  */
 package org.jboss.arquillian.gradle.task
 
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.client.container.LifecycleException
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
-
 /**
  * Arquillian start task.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 class ArquillianStart extends ArquillianTask {
     ArquillianStart() {
@@ -40,10 +36,9 @@ class ArquillianStart extends ArquillianTask {
      * {@inheritDoc}
      */
     @Override
-    void perform(Manager manager, Container container) throws LifecycleException {
+    void perform() {
         logger.info 'Starting Arquillian container.'
-        ArquillianContainerManager arquillianContainerManager = new ArquillianContainerManager()
-        arquillianContainerManager.setup(manager, container)
-        arquillianContainerManager.start(manager, container)
+        containerManager.setup()
+        containerManager.start()
     }
 }

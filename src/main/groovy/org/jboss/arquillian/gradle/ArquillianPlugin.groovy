@@ -17,8 +17,8 @@ package org.jboss.arquillian.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.WarPlugin
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ear.EarPlugin
 import org.jboss.arquillian.gradle.task.*
 
@@ -26,10 +26,16 @@ import org.jboss.arquillian.gradle.task.*
  * Arquillian plugin.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 class ArquillianPlugin implements Plugin<Project> {
-    static final EXTENSION_NAME = 'arquillian'
-    static final CONFIGURATION_NAME = 'arquillian'
+    static final String EXTENSION_NAME = 'arquillian'
+    static final String CONFIGURATION_NAME = 'arquillian'
+    static final String START_TASK_NAME = 'arquillianStart'
+    static final String STOP_TASK_NAME = 'arquillianStop'
+    static final String DEPLOY_TASK_NAME = 'arquillianDeploy'
+    static final String UNDEPLOY_TASK_NAME = 'arquillianUndeploy'
+    static final String RUN_TASK_NAME = 'arquillianRun'
 
     @Override
     void apply(Project project) {
@@ -69,17 +75,17 @@ class ArquillianPlugin implements Plugin<Project> {
     }
 
     /**
-     * Adds and configures the tasks that deal with a local Arquillian container.
+     * Adds and configures the tasks operating on a local Arquillian container.
      *
      * @param project Project
      * @param extension Extension
      */
     private void configureLocalContainerTasks(Project project) {
-        project.task('arquillianStart', type: ArquillianStart)
-        project.task('arquillianStop', type: ArquillianStop)
-        project.task('arquillianDeploy', type: ArquillianDeploy)
-        project.task('arquillianUndeploy', type: ArquillianUndeploy)
-        project.task('arquillianRun', type: ArquillianRun)
+        project.task(START_TASK_NAME, type: ArquillianStart)
+        project.task(STOP_TASK_NAME, type: ArquillianStop)
+        project.task(DEPLOY_TASK_NAME, type: ArquillianDeploy)
+        project.task(UNDEPLOY_TASK_NAME, type: ArquillianUndeploy)
+        project.task(RUN_TASK_NAME, type: ArquillianRun)
     }
 
     /**
@@ -100,23 +106,24 @@ class ArquillianPlugin implements Plugin<Project> {
             return deployable
         }
         else if(project.plugins.hasPlugin(WarPlugin)) {
-            return getArchivePathByTaskName(project, WarPlugin.WAR_TASK_NAME)
+            return getArchiveByTaskName(project, WarPlugin.WAR_TASK_NAME)
         }
         else if(project.plugins.hasPlugin(EarPlugin)) {
-            return getArchivePathByTaskName(project, EarPlugin.EAR_TASK_NAME)
+            return getArchiveByTaskName(project, EarPlugin.EAR_TASK_NAME)
         }
-
-        getArchivePathByTaskName(project, Jar.TASK_NAME)
+        else if(project.plugins.hasPlugin(JavaPlugin)) {
+            return getArchiveByTaskName(project, JavaPlugin.JAR_TASK_NAME)
+        }
     }
 
     /**
-     * Gets archive path by task name.
+     * Gets archive by task name.
      *
      * @param project Project
      * @param taskName Task name
      * @return Archive
      */
-    private File getArchivePathByTaskName(Project project, String taskName) {
+    private File getArchiveByTaskName(Project project, String taskName) {
         project.tasks.getByName(taskName).archivePath
     }
 }

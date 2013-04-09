@@ -16,25 +16,24 @@
 package org.jboss.arquillian.gradle.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.ContainerRegistry
-import org.jboss.arquillian.container.spi.client.container.DeploymentException
-import org.jboss.arquillian.container.spi.client.container.LifecycleException
-import org.jboss.arquillian.container.spi.client.deployment.TargetDescription
-import org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.core.spi.ManagerBuilder
+import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
+import org.jboss.arquillian.gradle.utils.ContainerManager
 
 /**
  * Arquillian parent task.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 abstract class ArquillianTask extends DefaultTask {
+    static final String TASK_GROUP = 'Arquillian'
+    protected ContainerManager containerManager
+
     /**
      * Flag that indicates if Arquillian should be run in debug mode.
      */
@@ -42,14 +41,16 @@ abstract class ArquillianTask extends DefaultTask {
     Boolean debug
 
     /**
-     * The Arquillian configuration file.
+     * The Arquillian configuration file. If no configuration file is provided, a container can be managed but no
+     * integration tests can be run against it.
      */
     @InputFile
     @Optional
     File config
 
     /**
-     * The Arquillian container to be launched.
+     * The Arquillian container to be launched. If no container name is provided, Arquillian will pick the one from the
+     * configuration file marked as default.
      */
     @Input
     @Optional
@@ -57,7 +58,7 @@ abstract class ArquillianTask extends DefaultTask {
 
     ArquillianTask(String description) {
         this.description = description
-        group = 'Arquillian'
+        group = TASK_GROUP
     }
 
     @TaskAction
@@ -66,9 +67,14 @@ abstract class ArquillianTask extends DefaultTask {
         logger.info 'Configuring Arquillian container.'
         initSystemProperties()
 
-        Manager manager = initManager()
-        Container container = getDefaultContainer(manager)
-        perform(manager, container)
+        try {
+            containerManager = new ArquillianContainerManager()
+            perform()
+        }
+        catch(Exception e) {
+            logger.error "Failed to perform Arquillian container action", e
+            throw new GradleException("Failed to perform Arquillian container action", e)
+        }
     }
 
     /**
@@ -91,17 +97,6 @@ abstract class ArquillianTask extends DefaultTask {
         }
     }
 
-    private Manager initManager() {
-        Manager manager = ManagerBuilder.from().extension(LoadableExtensionLoader).create()
-        manager.start()
-        manager
-    }
-
-    private Container getDefaultContainer(Manager manager) {
-        ContainerRegistry registry = manager.resolve(ContainerRegistry)
-        return registry.getContainer(TargetDescription.DEFAULT)
-    }
-
     /**
      * Validates configuration.
      */
@@ -109,11 +104,6 @@ abstract class ArquillianTask extends DefaultTask {
 
     /**
      * Performs Arquillian operation.
-     *
-     * @param manager Manager
-     * @param container Container
-     * @throws DeploymentException
-     * @throws LifecycleException
      */
-    abstract void perform(Manager manager, Container container) throws DeploymentException, LifecycleException
+    abstract void perform()
 }

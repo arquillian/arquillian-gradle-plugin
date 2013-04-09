@@ -15,18 +15,11 @@
  */
 package org.jboss.arquillian.gradle.task
 
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.client.container.DeploymentException
-import org.jboss.arquillian.container.spi.client.container.LifecycleException
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
-import org.jboss.shrinkwrap.api.Archive
-import org.jboss.shrinkwrap.api.GenericArchive
-
 /**
  * Arquillian run task.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 class ArquillianRun extends ArquillianDeployableTask {
     ArquillianRun() {
@@ -37,13 +30,11 @@ class ArquillianRun extends ArquillianDeployableTask {
      * {@inheritDoc}
      */
     @Override
-    void perform(Manager manager, Container container) throws DeploymentException, LifecycleException {
+    void perform() {
         logger.info 'Runs Arquillian container and deploying archive to it.'
-        Archive<GenericArchive> deployment = createDeployableArchive()
-        ArquillianContainerManager arquillianContainerManager = new ArquillianContainerManager()
-        arquillianContainerManager.setup(manager, container)
-        arquillianContainerManager.start(manager, container)
-        arquillianContainerManager.deploy(manager, container, deployment)
+        containerManager.setup()
+        containerManager.start()
+        containerManager.deploy(getDeployable())
 
         try {
             while(true) {
@@ -51,9 +42,9 @@ class ArquillianRun extends ArquillianDeployableTask {
             }
         }
         catch(InterruptedException e) {
-            logger.error "Container was stopped", e
-            arquillianContainerManager.undeploy(manager, container, deployment)
-            arquillianContainerManager.stop(manager, container)
+            logger.error 'Container was stopped', e
+            containerManager.undeploy(getDeployable())
+            containerManager.stop()
         }
     }
 }

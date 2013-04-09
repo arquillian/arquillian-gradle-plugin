@@ -15,29 +15,23 @@
  */
 package org.jboss.arquillian.gradle.task
 
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.client.container.DeploymentException
-import org.jboss.arquillian.container.spi.client.container.LifecycleException
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
-
 /**
  * Arquillian deploy task.
  *
  * @author Benjamin Muschko
+ * @author Aslak Knutsen
  */
 class ArquillianDeploy extends ArquillianDeployableTask {
     ArquillianDeploy() {
-        super('Deploys an archive from Arquillian container.')
+        super('Deploys an archive to Arquillian container.')
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void perform(Manager manager, Container container) throws DeploymentException, LifecycleException {
+    void perform() {
         logger.info 'Deploying archive to Arquillian container.'
-        ArquillianContainerManager arquillianContainerManager = new ArquillianContainerManager()
-        arquillianContainerManager.deploy(manager, container, createDeployableArchive())
+        containerManager.deploy(getDeployable())
     }
 }

@@ -13,34 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.gradle
+package org.jboss.arquillian.gradle.utils
 
 /**
- * Arquillian plugin extension.
+ * Container manager interface.
  *
  * @author Benjamin Muschko
  * @author Aslak Knutsen
  */
-class ArquillianPluginExtension {
+interface ContainerManager {
     /**
-     * Configures the Arquillian container to run in debug mode. The debug mode gives you more detailed information
-     * on what is happening under the cover when interacting with Arquillian.
+     * Sets up container.
      */
-    Boolean debug = Boolean.FALSE
+    void setup()
 
     /**
-     * The deployable artifact. This can be a WAR, EAR or JAR file.
+     * Starts container.
      */
-    File deployable
+    void start()
 
     /**
-     * The Arquillian configuration file usually named arquillian.xml.
+     * Stops container.
      */
-    File config
+    void stop()
 
     /**
-     * The intended Arquillian container to be launched. The container is defined by the XML attribute "qualifier"
-     * in the configuration file.
+     * Deploys artifact to container.
+     *
+     * @param deployable Deployable
      */
-    String launch
+    void deploy(File deployable)
+
+    /**
+     * Undeploying artifact from container.
+     *
+     * @param deployable Deployable
+     */
+    void undeploy(File deployable)
 }

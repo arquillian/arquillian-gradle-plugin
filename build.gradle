@@ -9,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    groovy localGroovy()
+    compile localGroovy()
     compile gradleApi()
-    testCompile "junit:junit:4.8.1"
+    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 
     ext.arquillianVersion = '1.0.3.Final'
     compile "org.jboss.arquillian.core:arquillian-core-impl-base:$arquillianVersion"
