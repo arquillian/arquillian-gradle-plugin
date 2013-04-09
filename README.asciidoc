@@ -14,6 +14,8 @@ apply plugin: 'arquillian'
 
 == Tasks
 
+The plugin defines the following tasks:
+
 [options="header"]
 |=======
 |Task name            |Depends on |Type                |Description
@@ -23,6 +25,7 @@ apply plugin: 'arquillian'
 |`arquillianUndeploy` |-          |ArquillianUndeploy  |Undeploys an archive from a container.
 |`arquillianRun`      |-          |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
 |=======
+
 
 == Extension properties
 
