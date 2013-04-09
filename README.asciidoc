@@ -22,6 +22,7 @@ apply plugin: 'arquillian'
 |`arquillianDeploy`   |-          |ArquillianDeploy    |Deploys an archive to a container.
 |`arquillianUndeploy` |-          |ArquillianUndeploy  |Undeploys an archive from a container.
 |`arquillianRun`      |-          |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
+|=======
 
 == Extension properties
 
@@ -34,6 +35,7 @@ The plugin defines the following extension properties in the `arquillian` closur
 |`deployable`  |File    |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
 |`config`      |File    |`null`                                            |The Arquillian configuration file usually named `arquillian.xml`.
 |`launch`      |String  |default in Arquillian configuration file          |The intended Arquillian container to be launched.
+|=======
 
 === Example
 
