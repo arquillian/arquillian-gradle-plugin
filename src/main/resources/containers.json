@@ -1,0 +1,1261 @@
+[
+    {
+        "download":{
+            "group_id":"org.jboss.jbossas",
+            "artifact_id":"jboss-as-dist"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"dom4j",
+                "artifact_id":"dom4j"
+            },
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-server-manager"
+            },
+            {
+                "group_id":"org.jboss.client",
+                "artifact_id":"jbossall-client"
+            }
+        ],
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Managed 4.2.x",
+        "containerType":"MANAGED",
+        "artifact_id":"arquillian-jbossas-managed-4.2"
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"dom4j",
+                "artifact_id":"dom4j"
+            },
+            {
+                "group_id":"org.jboss.client",
+                "artifact_id":"jbossall-client"
+            }
+        ],
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Remote 4.2.x",
+        "containerType":"REMOTE",
+        "artifact_id":"arquillian-jbossas-remote-4.2"
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-client"
+            }
+        ],
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Remote 5.x",
+        "containerType":"REMOTE",
+        "artifact_id":"arquillian-jbossas-remote-5"
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-server-manager"
+            },
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-client"
+            }
+        ],
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"ProfileService profileKey. Used to load the correct profile into the DeploymentManager.",
+                "name":"profileName",
+                "default":"default"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Used by the ServerManager to communicate with the server.",
+                "name":"rmiPort",
+                "default":"1099"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The JBoss configuration to start.",
+                "name":"jbossHome",
+                "default":"$JBOSS_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The Java runtime to use to start the server.",
+                "name":"javaHome",
+                "default":"$JAVA_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"JVM arguments used to start the server.",
+                "name":"javaVmArguments",
+                "default":"-Xmx512m -XX:MaxPermSize=128m"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"If the ServerManager should use the RMI port when checking if the server is up.",
+                "name":"useRmiPortForAliveCheck",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Time to wait before throwing Exception on server startup.",
+                "name":"startupTimeoutInSeconds",
+                "default":"120"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Time to wait before throwing Exception on server shutdown.",
+                "name":"shutdownTimeoutInSeconds",
+                "default":"45"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Managed 5.1.x",
+        "containerType":"MANAGED",
+        "artifact_id":"arquillian-jbossas-managed-5.1"
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-client"
+            }
+        ],
+
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Remote 5.1.x",
+        "containerType":"REMOTE",
+        "artifact_id":"arquillian-jbossas-remote-5.1"
+    },
+    {
+        "download":{
+            "group_id":"org.jboss.jbossas",
+            "artifact_id":"jboss-as-distribution"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.embedded",
+                "artifact_id":"jboss-embedded-api"
+            },
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-depchain"
+            }
+        ],
+
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Embedded 6.x",
+        "containerType":"EMBEDDED",
+        "artifact_id":"arquillian-jbossas-embedded-6"
+    },
+    {
+        "download":{
+            "group_id":"org.jboss.jbossas",
+            "artifact_id":"jboss-as-distribution"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-server-manager"
+            },
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-client"
+            }
+        ],
+
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Managed 6.x",
+        "containerType":"MANAGED",
+        "artifact_id":"arquillian-jbossas-managed-6"
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "dependencies":[
+            {
+                "group_id":"org.jboss.jbossas",
+                "artifact_id":"jboss-as-client"
+            }
+        ],
+
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip/host for the containers management interface",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port for the containers management interface",
+                "name":"httpPort",
+                "default":"8080"
+
+            }
+        ],
+        "name":"Arquillian Container JBoss AS Remote 6.x",
+        "containerType":"REMOTE",
+        "artifact_id":"arquillian-jbossas-remote-6"
+    },
+    {
+        "artifact_id":"arquillian-tomcat-managed-5.5",
+        "download":{
+            "url":"http://archive.apache.org/dist/tomcat/tomcat-5/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "containerType":"MANAGED",
+        "name":"Arquillian Container Tomcat Managed 5.5.x"
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"catalina",
+                "group_id":"org.apache.tomcat",
+                "version":"6.0.32"
+            },
+            {
+                "artifact_id":"coyote",
+                "group_id":"org.apache.tomcat",
+                "version":"6.0.32"
+            },
+            {
+                "artifact_id":"jasper",
+                "group_id":"org.apache.tomcat",
+                "version":"6.0.32"
+            }
+        ],
+        "artifact_id":"arquillian-tomcat-embedded-6",
+        "group_id":"org.jboss.arquillian.container",
+        "version":"1.0.0.CR4",
+        "name":"Arquillian Container Tomcat Embedded 6.x",
+        "containerName":"tomcat",
+        "containerVersion":"6",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server should bind to.",
+                "name":"bindHttpPort",
+                "default":"9090"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The host the server should be run on.",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional location of a Tomcat installation to link against.",
+                "name":"tomcatHome",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional name of the server",
+                "name":"serverName",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional relative or absolute path to the directory where applications are deployed (e.g., webapps).",
+                "name":"appBase",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional relative or absolute path to the directory where applications are expanded and session serialization data is stored.",
+                "name":"workDir",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specify if the deployment should be deployed exploded or compressed.",
+                "name":"unpackArchive",
+                "default":"true"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-tomcat-remote-6",
+        "group_id":"org.jboss.arquillian.container",
+        "version":"1.0.0.CR4",
+        "name":"Arquillian Container Tomcat Remote 6.x",
+        "containerName":"tomcat",
+        "containerVersion":"6",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server is bound to.",
+                "name":"httpPort",
+                "default":"8080"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The host the server is running on.",
+                "name":"host",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The user to authenticate as when using the Management console",
+                "name":"user",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password to authenticate with when using the Management console ",
+                "name":"pass",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The JMX port used to connect to the running instance, needed for deployment introspection",
+                "name":"jmxPort",
+                "default":"8089"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-tomcat-managed-6",
+        "download":{
+            "url":"http://archive.apache.org/dist/tomcat/tomcat-6/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Tomcat Managed 6.x",
+        "containerType":"MANAGED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server should bind to.",
+                "name":"bindHttpPort",
+                "default":"9090"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The host the server will run on, has to be same as in CATALINA_HOME/conf/server.xml.",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The Tomcat configuration to start. ",
+                "name":"catalinaHome",
+                "default":"$CATALINA_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The Java runtime to use to start the server. ",
+                "name":"javaHome",
+                "default":"$JAVA_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"JVM arguments used to start the server. ",
+                "name":"javaVmArguments",
+                "default":"-Xmx512m -XX:MaxPermSize=128m"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Username of the user who has manager role. It is set in CATALINA_HOME/conf/tomcat-users.xml.",
+                "name":"user",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Password of the user who has manager role. It is set in CATALINA_HOME/conf/tomcat-users.xml.",
+                "name":"pass",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The JMX port used to connect to the running instance, needed for deployment introspection.",
+                "name":"jmxPort",
+                "default":"8089"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Charset of URL used for deploy/undeploy operations.",
+                "name":"urlCharset",
+                "default":"ISO-8859-1"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Should the server startup console log be piped to the console. ",
+                "name":"outputToConsole",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Time to wait before throwing Exception on server startup.",
+                "name":"startupTimeoutInSeconds",
+                "default":"120"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Which server configuration file to startup with.",
+                "name":"serverConfig",
+                "default":"server.xml"
+            }
+
+        ]
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"tomcat-embed-core",
+                "group_id":"org.apache.tomcat.embed",
+                "version":"7.0.39"
+            },
+            {
+                "artifact_id":"tomcat-embed-jasper",
+                "group_id":"org.apache.tomcat.embed",
+                "version":"7.0.39"
+            },
+            {
+                "artifact_id":"tomcat-embed-logging-juli",
+                "group_id":"org.apache.tomcat.embed",
+                "version":"7.0.39"
+            }
+        ],
+        "artifact_id":"arquillian-tomcat-embedded-7",
+        "group_id":"org.jboss.arquillian.container",
+        "version":"1.0.0.CR4",
+        "containerName":"tomcat",
+        "containerVersion":"7",
+        "containerType":"EMBEDDED",
+        "name":"Arquillian Container Tomcat Embedded 7.x"
+    },
+    {
+        "artifact_id":"arquillian-tomcat-managed-7",
+        "download":{
+            "url":"http://archive.apache.org/dist/tomcat/tomcat-7/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+        },
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Tomcat Managed 7.x",
+        "containerType":"MANAGED"
+    },
+    {
+        "artifact_id":"arquillian-glassfish-remote-3.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container GlassFish Remote 3.1 (REST)",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The administrative port the client should connect to.",
+                "name":"adminPort",
+                "default":"4848"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Glassfish Admin Server (DAS) host address.",
+                "name":"adminHost",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Use SSL for communicating with the admin server.",
+                "name":"adminHttps",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The name of the admin user of your DAS. If omitted, no authentication will be used to access the DAS. This case you must have empty password for your admin user.",
+                "name":"adminUser",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password of the admin user of your DAS. Canot be omitted if you declare the admin user. If no authentication will be used to access the DAS you must have empty password for your admin user.",
+                "name":"adminPassword",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies the target to which you are deploying. We use the “target” as property key with the same semantics as the standard GlassFish utilities do.",
+                "name":"target",
+                "default":"server"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"A comma-separated list of library JAR files. Specify the library JAR  files by their relative or absolute paths. Specify relative paths relative to domain-dir/lib/applibs. The libraries are made available to the application in the order specified. For more detail, please refer to GlassFish Server 3.1 Administration Guide.",
+                "name":"libraries",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional keyword-value pairs  that  specify  additional properties for the deployment. The available properties are determined by the implementation of the  component that is being deployed. For more detail, please refer to GlassFish Server 3.1 Administration Guide.",
+                "name":"properties",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The packaging archive type of the component that is being deployed. Only valid value is: osgi meaning that the component is package is an OSGi Alliance bundle. The type option is optional. If the component is packaged as a regular archive, omit this option. For more detail, please refer to OSGi Application Development using GlassFish Server",
+                "name":"type",
+                "default":""
+            }
+        ]
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"glassfish-embedded-all",
+                "group_id":"org.glassfish.extras"
+            }
+        ],
+        "artifact_id":"arquillian-glassfish-embedded-3.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container GlassFish Embedded 3.1",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server should bind to.",
+                "name":"bindHttpPort",
+                "default":"8181"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The instanceRoot to use for booting the server. If it does not exist, a default structure will be created.",
+                "name":"instanceRoot",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The installRoot to use for booting the server. If it does not exist, a default structure will be created.",
+                "name":"installRoot",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The relative or absolute path to the domain.xml file that will be used to configure the instance. If absent, the default domain.xml configuration will be used.",
+                "name":"configurationXml",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"If true deployment changes are not written to the configuration and persisted.",
+                "name":"configurationReadOnly",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the add-resources asadmin command.",
+                "name":"sunResourcesXml",
+                "default":""
+            }
+        ]
+
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"jetty",
+                "group_id":"org.mortbay.jetty",
+                "version":"6.1.12"
+            },
+            {
+                "artifact_id":"jetty-plus",
+                "group_id":"org.mortbay.jetty",
+                "version":"6.1.12"
+            }
+        ],
+        "artifact_id":"arquillian-jetty-embedded-6.1",
+        "group_id":"org.jboss.arquillian.container",
+        "version":"1.0.0.CR1",
+        "name":"Arquillian Container Jetty Embedded 6.1.x",
+        "containerName":"jetty",
+        "containerVersion":"6.1",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server should bind to.",
+                "name":"bindHttpPort",
+                "default":"9090"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The host the server should be run on.",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Activates the Jetty plus configuration to support JNDI resources (requires jetty-plus and jetty-naming artifacts on the classpath).",
+                "name":"jettyPlus",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specify your own Jetty configuration classes as a comma separated list.",
+                "name":"configurationClasses",
+                "default":"null"
+            }
+        ]
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"jetty-webapp",
+                "group_id":"org.eclipse.jetty",
+                "version":"8.1.7.v20120910"
+            },
+            {
+                "artifact_id":"jetty-plus",
+                "group_id":"org.eclipse.jetty",
+                "version":"8.1.7.v20120910"
+            }
+        ],
+        "artifact_id":"arquillian-jetty-embedded-7",
+        "group_id":"org.jboss.arquillian.container",
+        "version":"1.0.0.CR1",
+        "name":"Arquillian Container Jetty Embedded 7.x and 8.x",
+        "containerName":"jetty",
+        "containerVersion":"8",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The HTTP port the server should bind to.",
+                "name":"bindHttpPort",
+                "default":"9090"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The host the server should be run on.",
+                "name":"bindAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Activates the Jetty plus configuration to support JNDI resources (requires jetty-plus and jetty-naming artifacts on the classpath).",
+                "name":"jettyPlus",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specify your own Jetty configuration classes as a comma separated list.",
+                "name":"configurationClasses",
+                "default":"null"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-was-remote-7",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container WebSphere AS Remote 7.x",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"SOAP port of the target WAS profile.",
+                "name":"remoteServerSoapPort",
+                "default":"8880"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Hostname for the target machine where the WAS profile is running.",
+                "name":"remoteServerAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Defines whether security is enabled. Note: When security is enabled you have to use an IBM SDK, otherwise the SSL connection will fail",
+                "name":"securityEnabled",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The username to use to connect to the target. - This is required even when security is disabled.",
+                "name":"username",
+                "default":"admin"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password to use to connect to the target.",
+                "name":"password",
+                "default":"admin"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the SSL Trust store to use.",
+                "name":"sslTrustStore",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password for the SSL Trust store.",
+                "name":"sslTrustStorePassword",
+                "default":"WebAS"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the SSL Key store to use.",
+                "name":"sslKeyStore",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password for the SSL Key store.",
+                "name":"sslKeyStorePassword",
+                "default":"WebAS"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-was-embedded-8",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container WebSphere AS Embedded 8.x",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"Location of a WAS embedded container properties file.",
+                "name":"embeddedProperties",
+                "default":""
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-was-remote-8",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container WebSphere AS Remote 8.x",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"SOAP port of the target WAS profile.",
+                "name":"remoteServerSoapPort",
+                "default":"8880"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Hostname for the target machine where the WAS profile is running.",
+                "name":"remoteServerAddress",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Defines whether security is enabled. Note: When security is enabled you have to use an IBM SDK, otherwise the SSL connection will fail",
+                "name":"securityEnabled",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The username to use to connect to the target. - This is required even when security is disabled.",
+                "name":"username",
+                "default":"admin"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password to use to connect to the target.",
+                "name":"password",
+                "default":"admin"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the SSL Trust store to use.",
+                "name":"sslTrustStore",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password for the SSL Trust store.",
+                "name":"sslTrustStorePassword",
+                "default":"WebAS"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the SSL Key store to use.",
+                "name":"sslKeyStore",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password for the SSL Key store.",
+                "name":"sslKeyStorePassword",
+                "default":"WebAS"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-openejb-embedded-3.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container OpenEJB Embedded 3.1.x",
+        "containerType":"EMBEDDED",
+        "dependencies":[
+            {
+                "artifact_id":"openejb-core",
+                "group_id":"org.apache.openejb"
+            },
+            {
+                "artifact_id":"javax.inject",
+                "group_id":"javax.inject"
+            }
+        ],
+
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"Specify the OpenEJB XML configuration file.",
+                "name":"openEjbXml",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specify the OpenEJB properties configuration file.",
+                "name":"jndiProperties",
+                "default":""
+            }
+        ]
+    },
+    {
+        "dependencies":[
+            {
+                "artifact_id":"shrinkwrap-impl-base",
+                "group_id":"org.jboss.shrinkwrap"
+            },
+            {
+                "artifact_id":"openwebbeans-spi",
+                "group_id":"org.apache.openwebbeans"
+            },
+            {
+                "artifact_id":"openwebbeans-impl",
+                "group_id":"org.apache.openwebbeans"
+            },
+            {
+                "artifact_id":"geronimo-el_2.2_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-jta_1.1_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-validation_1.0_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-interceptor_1.1_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-jcdi_1.0_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-atinject_1.0_spec",
+                "group_id":"org.apache.geronimo.specs"
+            },
+            {
+                "artifact_id":"geronimo-servlet_2.5_spec",
+                "group_id":"org.apache.geronimo.specs"
+            }
+        ],
+        "artifact_id":"arquillian-openwebbeans-embedded-1",
+        "group_id":"org.jboss.arquillian.container",
+        "containerType":"EMBEDDED",
+        "name":"Arquillian Container OpenWebBeans Embedded 1.x"
+    },
+    {
+        "artifact_id":"jboss-as-arquillian-container-managed",
+        "group_id":"org.jboss.as",
+        "name":"Arquillian Container JBoss AS Managed 7.x",
+        "containerType":"MANAGED",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The JBoss configuration to start.",
+                "name":"jbossHome",
+                "default":"$JBOSS_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The Java runtime to use to start the server.",
+                "name":"javaHome",
+                "default":"$JAVA_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the module repository.",
+                "name":"modulePath",
+                "default":"$module.path"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"JVM arguments used to start the server.",
+                "name":"javaVmArguments",
+                "default":"-Xmx512m -XX:MaxPermSize=128m"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Time to wait before throwing Exception on server startup.",
+                "name":"startupTimeoutInSeconds",
+                "default":"30"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Should the server startup console log be piped to the console",
+                "name":"outputToConsole",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Which server configuration file to startup with",
+                "name":"serverConfig",
+                "default":"standalone.xml"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The ip address of the running server instances manage interface",
+                "name":"managementAddress",
+                "default":"127.0.0.1"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The management port for deployment",
+                "name":"managementPort",
+                "default":"9999"
+            }
+        ],
+
+        "download":{
+            "group_id":"org.jboss.as",
+            "artifact_id":"jboss-as-dist"
+        }
+
+
+    },
+    {
+        "artifact_id":"jboss-as-arquillian-container-remote",
+        "group_id":"org.jboss.as",
+        "name":"Arquillian Container JBoss AS Remote 7.x",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The ip address of the running server instances management interface",
+                "name":"managementAddress",
+                "default":"127.0.0.1"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The management port for deployment",
+                "name":"managementPort",
+                "default":"9999"
+            }
+        ]
+    },
+
+    {
+        "artifact_id":"arquillian-weld-ee-embedded-1.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weld EE Embedded 1.1",
+        "containerType":"EMBEDDED",
+        "configurations":[
+            {
+                "type":"java.lang.Boolean",
+                "description":"Activate ConversationScope between @Test methods. Use this to simulate Weld Servlet HTTP Conversation scope support.",
+                "name":"enableConversationScope",
+                "default":"false"
+            }
+        ],
+        "dependencies":[
+            {
+                "artifact_id":"weld-core",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"weld-api",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"slf4j-simple",
+                "group_id":"org.slf4j"
+            }
+        ]
+
+    },
+    {
+        "artifact_id":"arquillian-weld-se-embedded-1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weld SE Embedded 1.0",
+        "containerType":"EMBEDDED"
+    },
+    {
+        "artifact_id":"arquillian-weld-se-embedded-1.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weld SE Embedded 1.1",
+        "containerType":"EMBEDDED"
+    },
+    {
+        "artifact_id":"arquillian-wls-remote-10.3",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weblogic Remote 10.3",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"The listen address, port and protocol of the WebLogic domain's Administration Server. ",
+                "name":"adminUrl",
+                "default":"127.0.0.1"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The protocol used to connect to the Administration Server when running the weblogic.Deployer command. This is optional, for this is deduced from the adminUrl property",
+                "name":"adminProtocol",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The listen address of the Administration Server; weblogic.Deployer will connect to the Administration Server bound to this address. This is optional, for this is deduced from the adminUrl property.",
+                "name":"adminListenAddress",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port on which the Administration Server listens for admin traffic. weblogic.Deployer will connect to the Administration Server at this port. This is optional, for this is deduced from the adminUrl property.",
+                "name":"adminListenPort",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The name of the WebLogic Server user to use for authentication. Any user specified here, should belong to the Deployers group.",
+                "name":"adminUserName",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password of the WebLogic Server user, to use for authentication.",
+                "name":"adminPassword",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the WebLogic Server installation. ",
+                "name":"wlsHome",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The target for the deployment. This is either an individual Server or a cluster within the WebLogic domain.",
+                "name":"target",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the weblogic.jar file within the WebLogic Server installation. The location is typically inferred from the wlsHome property, but this can be specified explicitly.",
+                "name":"weblogicJarPath",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the wljmxclient.jar file within the WebLogic Server installtion. Like the weblogicJarPath property, this one is typically inferred from the wlsHome property, but can be set explicitly.",
+                "name":"jmxLibPath",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The protocol to use, to connect to the WebLogic Domain Runtime MBean Server. If the value is not specified, it will be derived from the adminUrl property.",
+                "name":"jmxProtocol",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The hostname or IP address to connect to, when creating a connection to the WebLogic Domain Runtime MBean Server. If the value is not specified, it will be derived from the adminUrl property.",
+                "name":"jmxHost",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"The port on the jmxHost to connect to, when creating a connection to the WebLogic Domain Runtime MBean Server. If the value is not specified, it will be derived from the adminUrl property.",
+                "name":"jmxPort",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specifies whether the weblogic.Deployer command and the JMX client should use the WebLogic Demonstration Trust Store when connecting to the Domain Administration Server on a SSL port.",
+                "name":"useDemoTrust",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specifies whether the weblogic.Deployer command and the JMX client should use the Trust Store of the JRE when connecting to the Domain Administration Server on a SSL port.",
+                "name":"useJavaStandardTrust",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"pecifies whether the weblogic.Deployer command and the JMX client should use a Custom Trust Store when connecting to the Domain Administration Server on a SSL port.",
+                "name":"useCustomTrust",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The Java Runtime Environment to use for launching the weblogic.Deployer command.",
+                "name":"javaHome",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The location of the truststore to use when connecting to an Administration Server on a SSL channel.",
+                "name":"trustStoreLocation",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password used to protect the truststore. Usually, one need not specify a password, as the trust store entries (in a JKS file) can be read without a password.",
+                "name":"trustStorePassword",
+                "default":""
+            }
+        ]
+
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "artifact_id":"arquillian-openshift-express",
+        "name":"Arquillian Container Openshift",
+        "containerType":"REMOTE",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"Your Openshift domain name",
+                "name":"namespace",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift application name",
+                "name":"application",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The sshUserName can be found in the Repository URL in the Express Console, e.g. ssh:// 4348a6ba9d3943e6a64e0a1607b37bd5 @test-ikecloud.rhcloud.com/~/git/test.git/",
+                "name":"sshUserName",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift password",
+                "name":"passphrase",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift login",
+                "name":"login",
+                "default":""
+            }
+        ]
+    }
+
+]

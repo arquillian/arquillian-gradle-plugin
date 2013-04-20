@@ -14,10 +14,26 @@ dependencies {
     testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 
     ext.arquillianVersion = '1.0.3.Final'
-    compile "org.jboss.arquillian.core:arquillian-core-impl-base:$arquillianVersion"
-    compile "org.jboss.arquillian.container:arquillian-container-impl-base:$arquillianVersion"
+    testCompile "org.jboss.arquillian.core:arquillian-core-impl-base:$arquillianVersion"
+    testCompile "org.jboss.arquillian.container:arquillian-container-impl-base:$arquillianVersion"
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.5'
+}
+
+idea.project {
+    jdkName = '1.6'
+
+    ipr.withXml { provider ->
+        def node = provider.asNode()
+
+        // Use GIT
+        def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+        vcsConfig.mapping[0].'@vcs' = 'Git'
+
+        // Set Gradle home
+        def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
+        gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
+    }
 }

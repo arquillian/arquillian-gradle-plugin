@@ -17,12 +17,14 @@ package org.jboss.arquillian.gradle.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
 import org.jboss.arquillian.gradle.utils.ContainerManager
+
+import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContextClassLoader
 
 /**
  * Arquillian parent task.
@@ -41,20 +43,10 @@ abstract class ArquillianTask extends DefaultTask {
     Boolean debug
 
     /**
-     * The Arquillian configuration file. If no configuration file is provided, a container can be managed but no
-     * integration tests can be run against it.
+     * Arquillian classpath including the core libraries and container adapter libraries.
      */
-    @InputFile
-    @Optional
-    File config
-
-    /**
-     * The Arquillian container to be launched. If no container name is provided, Arquillian will pick the one from the
-     * configuration file marked as default.
-     */
-    @Input
-    @Optional
-    String launch
+    @InputFiles
+    FileCollection arquillianClasspath
 
     ArquillianTask(String description) {
         this.description = description
@@ -67,13 +59,15 @@ abstract class ArquillianTask extends DefaultTask {
         logger.info 'Configuring Arquillian container.'
         initSystemProperties()
 
-        try {
-            containerManager = new ArquillianContainerManager()
-            perform()
-        }
-        catch(Exception e) {
-            logger.error "Failed to perform Arquillian container action", e
-            throw new GradleException("Failed to perform Arquillian container action", e)
+        withThreadContextClassLoader(getArquillianClasspath().files) {
+            try {
+                containerManager = new ArquillianContainerManager()
+                perform()
+            }
+            catch(Exception e) {
+                logger.error "Failed to perform Arquillian container action", e
+                throw new GradleException("Failed to perform Arquillian container action", e)
+            }
         }
     }
 
@@ -84,16 +78,6 @@ abstract class ArquillianTask extends DefaultTask {
         if(getDebug()) {
             logger.info "Arquillian container debug logging set to ${getDebug()}."
             System.setProperty('arquillian.debug', getDebug().toString())
-        }
-
-        if(getConfig()) {
-            logger.info "Using Arquillian configuration file '${getConfig()}'."
-            System.setProperty('arquillian.xml', getConfig().canonicalPath)
-        }
-
-        if(getLaunch()) {
-            logger.info "Selecting Arquillian container '${getLaunch()}'."
-            System.getProperty('arquillian.launch', getLaunch())
         }
     }
 

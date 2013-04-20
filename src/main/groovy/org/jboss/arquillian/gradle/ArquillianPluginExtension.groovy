@@ -15,6 +15,9 @@
  */
 package org.jboss.arquillian.gradle
 
+import org.gradle.util.ConfigureUtil
+import org.jboss.arquillian.gradle.container.ContainerType
+
 /**
  * Arquillian plugin extension.
  *
@@ -22,6 +25,8 @@ package org.jboss.arquillian.gradle
  * @author Aslak Knutsen
  */
 class ArquillianPluginExtension {
+    static final String EXTENSION_NAME = 'arquillian'
+
     /**
      * Configures the Arquillian container to run in debug mode. The debug mode gives you more detailed information
      * on what is happening under the cover when interacting with Arquillian.
@@ -34,13 +39,37 @@ class ArquillianPluginExtension {
     File deployable
 
     /**
-     * The Arquillian configuration file usually named arquillian.xml.
+     * Configuration options for a specific Arquillian container.
      */
-    File config
+    ArquillianContainer container = new ArquillianContainer()
 
     /**
-     * The intended Arquillian container to be launched. The container is defined by the XML attribute "qualifier"
-     * in the configuration file.
+     * Configures container configuration options. The specified closure
+     * delegates to an instance of {@link ArquillianContainer}.
+     *
+     * @param config Configuration
      */
-    String launch
+    void container(Closure config) {
+        ConfigureUtil.configure(config, container)
+    }
+}
+
+/**
+ * Configuration options for an Arquillian container.
+ */
+class ArquillianContainer {
+    /**
+     * The container name.
+     */
+    String name = 'jetty'
+
+    /**
+     * The container version.
+     */
+    String version = '8'
+
+    /**
+     * The type of container e.g. embedded, managed or remote.
+     */
+    String type = ContainerType.EMBEDDED.identifier
 }

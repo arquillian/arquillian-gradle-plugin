@@ -23,9 +23,9 @@ The plugin defines the following tasks:
 |Task name            |Depends on |Type                |Description
 |`arquillianStart`    |-          |ArquillianStart     |Starts a container.
 |`arquillianStop`     |-          |ArquillianStop      |Stops a running container.
-|`arquillianDeploy`   |-          |ArquillianDeploy    |Deploys an archive to a container.
-|`arquillianUndeploy` |-          |ArquillianUndeploy  |Undeploys an archive from a container.
-|`arquillianRun`      |-          |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
+|`arquillianDeploy`   |`assemble` |ArquillianDeploy    |Deploys an archive to a container.
+|`arquillianUndeploy` |`assemble` |ArquillianUndeploy  |Undeploys an archive from a container.
+|`arquillianRun`      |`assemble` |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
 |=======
 
 
@@ -38,8 +38,6 @@ The plugin defines the following extension properties in the `arquillian` closur
 |Property name |Type    |Default value                                     |Description
 |`debug`       |Boolean |`false`                                           |Configures the Arquillian container to run in debug mode.
 |`deployable`  |File    |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
-|`config`      |File    |`null`                                            |The Arquillian configuration file usually named `arquillian.xml`.
-|`launch`      |String  |default in Arquillian configuration file          |The intended Arquillian container to be launched.
 |=======
 
 === Example
@@ -48,5 +46,10 @@ The plugin defines the following extension properties in the `arquillian` closur
 ----
 arquillian {
     debug = true
-    config = file('src/test/resources/arquillian.xml')
+
+    container {
+        name = 'jetty'
+        version = '8'
+        type = 'embedded'
+    }
 }

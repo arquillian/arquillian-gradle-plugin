@@ -1,23 +1,25 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.gradle.utils
 
 import groovy.util.logging.Slf4j
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.ContainerRegistry
-import org.jboss.arquillian.container.spi.client.deployment.Deployment
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription
-import org.jboss.arquillian.container.spi.client.deployment.TargetDescription
-import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData
-import org.jboss.arquillian.container.spi.event.*
-import org.jboss.arquillian.core.api.Instance
-import org.jboss.arquillian.core.api.annotation.Inject
-import org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.core.spi.ManagerBuilder
-import org.jboss.arquillian.core.spi.NonManagedObserver
-import org.jboss.shrinkwrap.api.Archive
-import org.jboss.shrinkwrap.api.GenericArchive
-import org.jboss.shrinkwrap.api.ShrinkWrap
-import org.jboss.shrinkwrap.api.importer.ZipImporter
+
+import java.lang.reflect.Constructor
+
+import static org.jboss.arquillian.gradle.utils.ArquillianUtils.loadClass
 
 /**
  * Arquillian container manager that provides useful and reoccuring operations.
@@ -27,9 +29,9 @@ import org.jboss.shrinkwrap.api.importer.ZipImporter
  */
 @Slf4j
 class ArquillianContainerManager implements ContainerManager {
-    private Manager manager
-    private Container container
-    private Map<Archive<?>, Deployment> contextMap = new HashMap<Archive<?>, Deployment>()
+    private manager
+    private container
+    private contextMap = [:]
 
     ArquillianContainerManager() {
         initManager()
@@ -40,7 +42,9 @@ class ArquillianContainerManager implements ContainerManager {
      * Initializes Arquillian manager.
      */
     private void initManager() {
-        manager = ManagerBuilder.from().extension(LoadableExtensionLoader).create()
+        Class extension = loadClass('org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader')
+        def managerBuilder = loadClass('org.jboss.arquillian.core.spi.ManagerBuilder')
+        manager = managerBuilder.from().extension(extension).create()
         manager.start()
     }
 
@@ -48,8 +52,10 @@ class ArquillianContainerManager implements ContainerManager {
      * Creates default Arquillian container.
      */
     private void createDefaultContainer() {
-        ContainerRegistry registry = manager.resolve(ContainerRegistry)
-        container = registry.getContainer(TargetDescription.DEFAULT)
+        Class registryClass = loadClass('org.jboss.arquillian.container.spi.ContainerRegistry')
+        def registry = manager.resolve(registryClass)
+        Class targetDescription = loadClass('org.jboss.arquillian.container.spi.client.deployment.TargetDescription')
+        container = registry.getContainer(targetDescription.DEFAULT)
     }
 
     /**
@@ -57,7 +63,7 @@ class ArquillianContainerManager implements ContainerManager {
      */
     @Override
     void setup() {
-        manager.fire(new SetupContainer(container))
+        fireContainerEvent('org.jboss.arquillian.container.spi.event.SetupContainer')
     }
 
     /**
@@ -65,7 +71,7 @@ class ArquillianContainerManager implements ContainerManager {
      */
     @Override
     void start() {
-        manager.fire(new StartContainer(container))
+        fireContainerEvent('org.jboss.arquillian.container.spi.event.StartContainer')
     }
 
     /**
@@ -73,7 +79,14 @@ class ArquillianContainerManager implements ContainerManager {
      */
     @Override
     void stop() {
-        manager.fire(new StopContainer(container))
+        fireContainerEvent('org.jboss.arquillian.container.spi.event.StopContainer')
+    }
+
+    private void fireContainerEvent(String className) {
+        Class setupContainer = loadClass(className)
+        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
+        Constructor constructor = setupContainer.getConstructor(containerClazz)
+        manager.fire(constructor.newInstance(container))
     }
 
     /**
@@ -81,8 +94,11 @@ class ArquillianContainerManager implements ContainerManager {
      *
      * @return Deployable archive
      */
-    private Archive<GenericArchive> createDeployableArchive(File deployable) {
-        ShrinkWrap.create(ZipImporter, deployable.name).importFrom(deployable).as(GenericArchive)
+    private createDeployableArchive(File deployable) {
+        Class genericArchive = loadClass('org.jboss.shrinkwrap.api.GenericArchive')
+        Class zipImporter = loadClass('org.jboss.shrinkwrap.api.importer.ZipImporter')
+        Class shrinkWrap = loadClass('org.jboss.shrinkwrap.api.ShrinkWrap')
+        shrinkWrap.create(zipImporter, deployable.name).importFrom(deployable).as(genericArchive)
     }
 
     /**
@@ -90,21 +106,13 @@ class ArquillianContainerManager implements ContainerManager {
      */
     @Override
     void deploy(File deployable) {
-        Archive<GenericArchive> deployment = createDeployableArchive(deployable)
-        manager.fire(new DeployDeployment(container, getOrCreateDeployment(deployment)),
-                new NonManagedObserver<DeployDeployment>() {
-                    @Inject
-                    private Instance<ProtocolMetaData> metadataInst
+        def deployment = createDeployableArchive(deployable)
+        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
+        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class deployDeployment = loadClass('org.jboss.arquillian.container.spi.event.DeployDeployment')
+        Constructor constructor = deployDeployment.getConstructor(containerClazz, deploymentClazz)
 
-                    @Override
-                    public void fired(DeployDeployment event) {
-                        ProtocolMetaData metadata = metadataInst.get()
-
-                        if(metadata != null) {
-                            log.info "Protocol meta data: $metadata"
-                        }
-                    }
-                });
+        manager.fire(constructor.newInstance(container, getOrCreateDeployment(deployment)))
     }
 
     /**
@@ -112,8 +120,13 @@ class ArquillianContainerManager implements ContainerManager {
      */
     @Override
     void undeploy(File deployable) {
-        Archive<GenericArchive> deployment = createDeployableArchive(deployable)
-        manager.fire(new UnDeployDeployment(container, getOrCreateDeployment(deployment)))
+        def deployment = createDeployableArchive(deployable)
+        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
+        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class deployDeployment = loadClass('org.jboss.arquillian.container.spi.event.UnDeployDeployment')
+        Constructor constructor = deployDeployment.getConstructor(containerClazz, deploymentClazz)
+
+        manager.fire(constructor.newInstance(container, getOrCreateDeployment(deployment)))
     }
 
     /**
@@ -122,12 +135,18 @@ class ArquillianContainerManager implements ContainerManager {
      * @param archive Archive
      * @return Deployment
      */
-    private Deployment getOrCreateDeployment(Archive<?> archive) {
+    private getOrCreateDeployment(archive) {
         if(contextMap.containsKey(archive)) {
             return contextMap.remove(archive)
         }
 
-        Deployment deployment = new Deployment(new DeploymentDescription('NO-NAME', archive))
+        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class deploymentDescriptionClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription')
+        Class archiveClass = loadClass('org.jboss.shrinkwrap.api.Archive')
+        Constructor deploymentDescriptionConstructor = deploymentDescriptionClazz.getConstructor(String, archiveClass)
+        def deploymentDescription = deploymentDescriptionConstructor.newInstance('NO-NAME', archive)
+        Constructor deploymentConstructor = deploymentClazz.getConstructor(deploymentDescriptionClazz)
+        def deployment = deploymentConstructor.newInstance(deploymentDescription)
         contextMap.put(archive, deployment)
         deployment
     }

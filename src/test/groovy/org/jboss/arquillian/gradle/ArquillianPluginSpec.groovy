@@ -17,6 +17,7 @@ package org.jboss.arquillian.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
@@ -31,7 +32,7 @@ class ArquillianPluginSpec extends Specification {
 
     static {
         ALL_TASK_NAMES = [ArquillianPlugin.START_TASK_NAME, ArquillianPlugin.STOP_TASK_NAME, ArquillianPlugin.DEPLOY_TASK_NAME,
-		                  ArquillianPlugin.UNDEPLOY_TASK_NAME, ArquillianPlugin.RUN_TASK_NAME]
+                          ArquillianPlugin.UNDEPLOY_TASK_NAME, ArquillianPlugin.RUN_TASK_NAME]
         ALL_TASK_NAMES.asImmutable()
     }
 
@@ -49,7 +50,8 @@ class ArquillianPluginSpec extends Specification {
         when:
             project.apply plugin: 'arquillian'
         then:
-            project.extensions.findByName(ArquillianPlugin.EXTENSION_NAME) != null
+            project.plugins.hasPlugin(JavaPlugin)
+            project.extensions.findByName(ArquillianPluginExtension.EXTENSION_NAME) != null
 
             ALL_TASK_NAMES.each {
                 project.tasks.findByName(it) != null
@@ -60,43 +62,43 @@ class ArquillianPluginSpec extends Specification {
         when:
             project.apply plugin: 'arquillian'
         then:
-            project.extensions.findByName(ArquillianPlugin.EXTENSION_NAME) != null
+            project.extensions.findByName(ArquillianPluginExtension.EXTENSION_NAME) != null
 
             Task task = project.tasks.arquillianRun
             task != null
             !task.debug
-            task.deployable == null
-            task.config == null
-            task.launch == null
+            task.deployable == project.tasks.jar.archivePath
+            task.arquillianClasspath != null
     }
 
     def "Applies plugin and configures sample task through extension"() {
         given:
             File warFile = new File('this/is/mywebapp.war')
-            File configFile = new File('/src/test/arquillian/jetty/arquillian.xml')
-            String containerName = 'jboss'
         when:
             project.apply plugin: 'arquillian'
 
             project.arquillian {
                 debug = true
                 deployable = warFile
-                config = configFile
-                launch = containerName
+
+                container {
+                    name = 'tomcat'
+                    version = '7'
+                    type = 'embedded'
+                }
             }
         then:
             Task task = project.tasks.arquillianRun
             task != null
             task.debug == true
             task.deployable == warFile
-            task.config == configFile
-            task.launch == containerName
+            task.arquillianClasspath != null
     }
 
     def "Determines deployable for WAR project"() {
         when:
-            project.apply plugin: 'arquillian'
             project.apply plugin: 'war'
+            project.apply plugin: 'arquillian'
         then:
             Task task = project.tasks.arquillianRun
             task != null
@@ -105,8 +107,8 @@ class ArquillianPluginSpec extends Specification {
 
     def "Determines deployable for EAR project"() {
         when:
-            project.apply plugin: 'arquillian'
             project.apply plugin: 'ear'
+            project.apply plugin: 'arquillian'
         then:
             Task task = project.tasks.arquillianRun
             task != null
@@ -116,7 +118,6 @@ class ArquillianPluginSpec extends Specification {
     def "Determines deployable for Java project"() {
         when:
             project.apply plugin: 'arquillian'
-            project.apply plugin: 'java'
         then:
             Task task = project.tasks.arquillianRun
             task != null
@@ -125,8 +126,8 @@ class ArquillianPluginSpec extends Specification {
 
     def "Determines deployable for Groovy project"() {
         when:
-            project.apply plugin: 'arquillian'
             project.apply plugin: 'groovy'
+            project.apply plugin: 'arquillian'
         then:
             Task task = project.tasks.arquillianRun
             task != null

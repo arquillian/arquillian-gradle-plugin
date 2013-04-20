@@ -15,11 +15,16 @@
  */
 package org.jboss.arquillian.gradle
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.plugins.ear.EarPlugin
+import org.jboss.arquillian.gradle.container.ContainerType
+import org.jboss.arquillian.gradle.container.parser.JsonContainerDefinitionParser
+import org.jboss.arquillian.gradle.container.resolver.ContainerDefinitionResolver
+import org.jboss.arquillian.gradle.container.resolver.ProvidedContainerDefinitionResolver
 import org.jboss.arquillian.gradle.task.*
 
 /**
@@ -29,7 +34,6 @@ import org.jboss.arquillian.gradle.task.*
  * @author Aslak Knutsen
  */
 class ArquillianPlugin implements Plugin<Project> {
-    static final String EXTENSION_NAME = 'arquillian'
     static final String CONFIGURATION_NAME = 'arquillian'
     static final String START_TASK_NAME = 'arquillianStart'
     static final String STOP_TASK_NAME = 'arquillianStop'
@@ -39,7 +43,8 @@ class ArquillianPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        ArquillianPluginExtension extension = project.extensions.create(EXTENSION_NAME, ArquillianPluginExtension)
+        project.plugins.apply(JavaPlugin)
+        ArquillianPluginExtension extension = project.extensions.create(ArquillianPluginExtension.EXTENSION_NAME, ArquillianPluginExtension)
         project.configurations.add(CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                               .setDescription('The Arquillian libraries to be used for this project.')
 
@@ -55,11 +60,58 @@ class ArquillianPlugin implements Plugin<Project> {
      * @param extension Extension
      */
     private void configureParentTask(Project project, ArquillianPluginExtension extension) {
+        ContainerDefinitionResolver resolver = new ProvidedContainerDefinitionResolver()
+        def containerDefinition = new JsonContainerDefinitionParser().parse(resolver.resolve())
+
         project.tasks.withType(ArquillianTask).whenTaskAdded { task ->
+            task.conventionMapping.map('arquillianClasspath') {
+                def config = project.configurations[ArquillianPluginExtension.EXTENSION_NAME]
+
+                if(config.dependencies.empty) {
+                    def container = getContainer(containerDefinition, extension.container)
+                    logger.info "Using $extension.container.type '$extension.container.name' container with version '$extension.container.version'."
+
+                    project.dependencies {
+                        // Core Arquillian libraries
+                        arquillian 'org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final'
+                        arquillian 'org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final'
+                        arquillian 'org.jboss.shrinkwrap:shrinkwrap-impl-base:1.1.2'
+
+                        // Container adapter libraries
+                        arquillian group: container.group_id, name: container.artifact_id, version: container.version
+
+                        container.dependencies.each { dep ->
+                            arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
+                        }
+                    }
+                }
+
+                config
+            }
             task.conventionMapping.map('debug') { extension.debug }
-            task.conventionMapping.map('config') { extension.config }
-            task.conventionMapping.map('launch') { extension.launch }
         }
+    }
+
+    /**
+     * Gets a particular container from the definition. The container is looked up by name, version and type. If the
+     * container cannot be found an {@see InvalidUserDataException} is thrown.
+     *
+     * @param containerDefinition Container definition
+     * @param containerConfig Container configuration
+     * @return Container
+     */
+    private getContainer(containerDefinition, ArquillianContainer containerConfig) {
+        ContainerType containerType = ContainerType.getContainerTypeForIdentifier(containerConfig.type)
+
+        def container = containerDefinition.find { it.containerName == containerConfig.name &&
+                                                   it.containerVersion == containerConfig.version &&
+                                                   it.containerType == containerType.name() }
+
+        if(!container) {
+            throw new InvalidUserDataException("Undefined $containerConfig.type '$containerConfig.name' container with version '$containerConfig.version'.")
+        }
+
+        container
     }
 
     /**
@@ -83,9 +135,9 @@ class ArquillianPlugin implements Plugin<Project> {
     private void configureLocalContainerTasks(Project project) {
         project.task(START_TASK_NAME, type: ArquillianStart)
         project.task(STOP_TASK_NAME, type: ArquillianStop)
-        project.task(DEPLOY_TASK_NAME, type: ArquillianDeploy)
-        project.task(UNDEPLOY_TASK_NAME, type: ArquillianUndeploy)
-        project.task(RUN_TASK_NAME, type: ArquillianRun)
+        project.task(DEPLOY_TASK_NAME, type: ArquillianDeploy, dependsOn: project.tasks.assemble)
+        project.task(UNDEPLOY_TASK_NAME, type: ArquillianUndeploy, dependsOn: project.tasks.assemble)
+        project.task(RUN_TASK_NAME, type: ArquillianRun, dependsOn: project.tasks.assemble)
     }
 
     /**
