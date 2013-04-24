@@ -22,6 +22,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
+import org.jboss.arquillian.gradle.utils.ArquillianSystemProperty
 import org.jboss.arquillian.gradle.utils.ContainerManager
 
 import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContextClassLoader
@@ -34,19 +35,26 @@ import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContex
  */
 abstract class ArquillianTask extends DefaultTask {
     static final String TASK_GROUP = 'Arquillian'
+    static final String CONTAINER_PROFILE_NAME = 'gradle_container'
     protected ContainerManager containerManager
-
-    /**
-     * Flag that indicates if Arquillian should be run in debug mode.
-     */
-    @Input
-    Boolean debug
 
     /**
      * Arquillian classpath including the core libraries and container adapter libraries.
      */
     @InputFiles
     FileCollection arquillianClasspath
+
+    /**
+     * Defines the configuration options for a container.
+     */
+    @Input
+    Map<String, Object> config
+
+    /**
+     * Flag that indicates if Arquillian should be run in debug mode.
+     */
+    @Input
+    Boolean debug
 
     ArquillianTask(String description) {
         this.description = description
@@ -77,7 +85,17 @@ abstract class ArquillianTask extends DefaultTask {
     private void initSystemProperties() {
         if(getDebug()) {
             logger.info "Arquillian container debug logging set to ${getDebug()}."
-            System.setProperty('arquillian.debug', getDebug().toString())
+            System.setProperty(ArquillianSystemProperty.DEBUG.propName, getDebug().toString())
+        }
+
+        // Defines a launch profile to set container configuration
+        if(getConfig().size() > 0) {
+            System.setProperty(ArquillianSystemProperty.LAUNCH.propName, CONTAINER_PROFILE_NAME)
+
+            getConfig().each { key, value ->
+                logger.info "Setting configuration property '$key' with value '$value'."
+                System.setProperty("arq.container.${CONTAINER_PROFILE_NAME}.configuration.$key", value.toString())
+            }
         }
     }
 

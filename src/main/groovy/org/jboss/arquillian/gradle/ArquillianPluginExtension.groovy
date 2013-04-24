@@ -72,4 +72,9 @@ class ArquillianContainer {
      * The type of container e.g. embedded, managed or remote.
      */
     String type = ContainerType.EMBEDDED.identifier
+
+    /**
+     * The container configuration deviating from the default settings.
+     */
+    Map<String, Object> config = new HashMap<String, Object>()
 }

@@ -15,16 +15,12 @@
  */
 package org.jboss.arquillian.gradle
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.plugins.ear.EarPlugin
-import org.jboss.arquillian.gradle.container.ContainerType
-import org.jboss.arquillian.gradle.container.parser.JsonContainerDefinitionParser
-import org.jboss.arquillian.gradle.container.resolver.ContainerDefinitionResolver
-import org.jboss.arquillian.gradle.container.resolver.ProvidedContainerDefinitionResolver
+import org.jboss.arquillian.gradle.container.ArquillianContainerRegistry
 import org.jboss.arquillian.gradle.task.*
 
 /**
@@ -60,15 +56,12 @@ class ArquillianPlugin implements Plugin<Project> {
      * @param extension Extension
      */
     private void configureParentTask(Project project, ArquillianPluginExtension extension) {
-        ContainerDefinitionResolver resolver = new ProvidedContainerDefinitionResolver()
-        def containerDefinition = new JsonContainerDefinitionParser().parse(resolver.resolve())
-
         project.tasks.withType(ArquillianTask).whenTaskAdded { task ->
             task.conventionMapping.map('arquillianClasspath') {
                 def config = project.configurations[ArquillianPluginExtension.EXTENSION_NAME]
 
                 if(config.dependencies.empty) {
-                    def container = getContainer(containerDefinition, extension.container)
+                    def container = ArquillianContainerRegistry.instance.getContainer(extension.container)
                     logger.info "Using $extension.container.type '$extension.container.name' container with version '$extension.container.version'."
 
                     project.dependencies {
@@ -88,30 +81,9 @@ class ArquillianPlugin implements Plugin<Project> {
 
                 config
             }
+            task.conventionMapping.map('config') { extension.container.config }
             task.conventionMapping.map('debug') { extension.debug }
         }
-    }
-
-    /**
-     * Gets a particular container from the definition. The container is looked up by name, version and type. If the
-     * container cannot be found an {@see InvalidUserDataException} is thrown.
-     *
-     * @param containerDefinition Container definition
-     * @param containerConfig Container configuration
-     * @return Container
-     */
-    private getContainer(containerDefinition, ArquillianContainer containerConfig) {
-        ContainerType containerType = ContainerType.getContainerTypeForIdentifier(containerConfig.type)
-
-        def container = containerDefinition.find { it.containerName == containerConfig.name &&
-                                                   it.containerVersion == containerConfig.version &&
-                                                   it.containerType == containerType.name() }
-
-        if(!container) {
-            throw new InvalidUserDataException("Undefined $containerConfig.type '$containerConfig.name' container with version '$containerConfig.version'.")
-        }
-
-        container
     }
 
     /**

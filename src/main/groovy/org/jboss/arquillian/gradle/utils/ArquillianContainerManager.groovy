@@ -82,10 +82,15 @@ class ArquillianContainerManager implements ContainerManager {
         fireContainerEvent('org.jboss.arquillian.container.spi.event.StopContainer')
     }
 
+    /**
+     * Fires container event.
+     *
+     * @param className Class name
+     */
     private void fireContainerEvent(String className) {
         Class setupContainer = loadClass(className)
-        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
-        Constructor constructor = setupContainer.getConstructor(containerClazz)
+        Class containerClass = loadClass('org.jboss.arquillian.container.spi.Container')
+        Constructor constructor = setupContainer.getConstructor(containerClass)
         manager.fire(constructor.newInstance(container))
     }
 
@@ -107,10 +112,10 @@ class ArquillianContainerManager implements ContainerManager {
     @Override
     void deploy(File deployable) {
         def deployment = createDeployableArchive(deployable)
-        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
-        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class containerClass = loadClass('org.jboss.arquillian.container.spi.Container')
+        Class deploymentClass = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
         Class deployDeployment = loadClass('org.jboss.arquillian.container.spi.event.DeployDeployment')
-        Constructor constructor = deployDeployment.getConstructor(containerClazz, deploymentClazz)
+        Constructor constructor = deployDeployment.getConstructor(containerClass, deploymentClass)
 
         manager.fire(constructor.newInstance(container, getOrCreateDeployment(deployment)))
     }
@@ -121,10 +126,10 @@ class ArquillianContainerManager implements ContainerManager {
     @Override
     void undeploy(File deployable) {
         def deployment = createDeployableArchive(deployable)
-        Class containerClazz = loadClass('org.jboss.arquillian.container.spi.Container')
-        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class containerClass = loadClass('org.jboss.arquillian.container.spi.Container')
+        Class deploymentClass = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
         Class deployDeployment = loadClass('org.jboss.arquillian.container.spi.event.UnDeployDeployment')
-        Constructor constructor = deployDeployment.getConstructor(containerClazz, deploymentClazz)
+        Constructor constructor = deployDeployment.getConstructor(containerClass, deploymentClass)
 
         manager.fire(constructor.newInstance(container, getOrCreateDeployment(deployment)))
     }
@@ -140,12 +145,12 @@ class ArquillianContainerManager implements ContainerManager {
             return contextMap.remove(archive)
         }
 
-        Class deploymentClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
-        Class deploymentDescriptionClazz = loadClass('org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription')
+        Class deploymentClass = loadClass('org.jboss.arquillian.container.spi.client.deployment.Deployment')
+        Class deploymentDescriptionClass = loadClass('org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription')
         Class archiveClass = loadClass('org.jboss.shrinkwrap.api.Archive')
-        Constructor deploymentDescriptionConstructor = deploymentDescriptionClazz.getConstructor(String, archiveClass)
+        Constructor deploymentDescriptionConstructor = deploymentDescriptionClass.getConstructor(String, archiveClass)
         def deploymentDescription = deploymentDescriptionConstructor.newInstance('NO-NAME', archive)
-        Constructor deploymentConstructor = deploymentClazz.getConstructor(deploymentDescriptionClazz)
+        Constructor deploymentConstructor = deploymentClass.getConstructor(deploymentDescriptionClass)
         def deployment = deploymentConstructor.newInstance(deploymentDescription)
         contextMap.put(archive, deployment)
         deployment

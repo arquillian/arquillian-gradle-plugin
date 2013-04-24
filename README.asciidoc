@@ -35,10 +35,13 @@ The plugin defines the following extension properties in the `arquillian` closur
 
 [options="header"]
 |=======
-|Property name |Type    |Default value                                     |Description
-|`debug`       |Boolean |`false`                                           |Configures the Arquillian container to run in debug mode.
-|`deployable`  |File    |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
+|Property name |Type                |Default value                                     |Description
+|`debug`       |Boolean             |`false`                                           |Configures the Arquillian container to run in debug mode.
+|`deployable`  |File                |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
+|`container`   |ArquillianContainer |null                                              |The container to be used.
 |=======
+
+If no container is specified using the `container` property, an embedded Jetty container is used.
 
 === Example
 
@@ -46,10 +49,12 @@ The plugin defines the following extension properties in the `arquillian` closur
 ----
 arquillian {
     debug = true
+    deployable = file('my/path/arbitraryWebApp.war')
 
     container {
         name = 'jetty'
         version = '8'
         type = 'embedded'
+        config = ['bindHttpPort': 8085, 'bindAddress': '127.0.0.1', 'jettyPlus': false]
     }
 }
