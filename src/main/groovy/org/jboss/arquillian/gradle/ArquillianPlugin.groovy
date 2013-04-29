@@ -1,160 +1,153 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
-import org.jboss.arquillian.container.spi.Container
-import org.jboss.arquillian.container.spi.ContainerRegistry
-import org.jboss.arquillian.container.spi.client.deployment.Deployment
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription
-import org.jboss.arquillian.container.spi.client.deployment.TargetDescription
-import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData
-import org.jboss.arquillian.container.spi.event.DeployDeployment
-import org.jboss.arquillian.container.spi.event.SetupContainer
-import org.jboss.arquillian.container.spi.event.StartContainer
-import org.jboss.arquillian.container.spi.event.StopContainer
-import org.jboss.arquillian.container.spi.event.UnDeployDeployment
-import org.jboss.arquillian.core.api.Instance
-import org.jboss.arquillian.core.api.annotation.Inject
-import org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader
-import org.jboss.arquillian.core.spi.Manager
-import org.jboss.arquillian.core.spi.ManagerBuilder
-import org.jboss.arquillian.core.spi.NonManagedObserver
-import org.jboss.shrinkwrap.api.Archive
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.WarPlugin
+import org.gradle.plugins.ear.EarPlugin
+import org.jboss.arquillian.gradle.container.ArquillianContainerRegistry
+import org.jboss.arquillian.gradle.task.*
 
+/**
+ * Arquillian plugin.
+ *
+ * @author Benjamin Muschko
+ * @author Aslak Knutsen
+ */
 class ArquillianPlugin implements Plugin<Project> {
+    static final String CONFIGURATION_NAME = 'arquillian'
+    static final String START_TASK_NAME = 'arquillianStart'
+    static final String STOP_TASK_NAME = 'arquillianStop'
+    static final String DEPLOY_TASK_NAME = 'arquillianDeploy'
+    static final String UNDEPLOY_TASK_NAME = 'arquillianUndeploy'
+    static final String RUN_TASK_NAME = 'arquillianRun'
 
-	private static Map<Archive<?>, Deployment> contextMap = new HashMap<Archive<?>, Deployment>();
-	private Manager manager;
-	
-	@Override
-	public void apply(Project project) {
-		System.setProperty("arquillian.debug", "true");
-		
-		project.extensions.create('arquillian', ArquillianPluginExtension.class)
-		project.task('run') << {
-			run(project)
-		}
-		project.task('start') << {
-			start(project)
-		}
-		project.task('deploy') << {
-			deploy(project)
-		}
-		project.task('undeploy') << {
-			undeploy(project)
-		}
-		project.task('stop') << {
-			stop(project)
-		}
+    @Override
+    void apply(Project project) {
+        project.plugins.apply(JavaPlugin)
+        ArquillianPluginExtension extension = project.extensions.create(ArquillianPluginExtension.EXTENSION_NAME, ArquillianPluginExtension)
+        project.configurations.add(CONFIGURATION_NAME).setVisible(false).setTransitive(true)
+                              .setDescription('The Arquillian libraries to be used for this project.')
 
-		
-		Set<Dependency> dependencies = [] as Set
-		dependencies.add(project.dependencies.create("org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final"))
-		dependencies.add(project.dependencies.create("org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final"))
-		dependencies.add(project.dependencies.create("org.jboss.arquillian.container:arquillian-jetty-embedded-7:1.0.0.CR1"))
-		dependencies.add(project.dependencies.create("org.eclipse.jetty:jetty-webapp:8.1.7.v20120910"))
-		dependencies.add(project.dependencies.create("org.eclipse.jetty:jetty-plus:8.1.7.v20120910"))
-		
-		def container = project.configurations.detachedConfiguration(dependencies as Dependency[])
-		
-		
-		// convert Set<File> to ClassLoader
-		// Load Arquillian Gradle Commands
-		// Execute Deploy
-		// 		war.archivePath
-		// 		ear.archivePath
-		// 		jar.archivePath
-		
+        configureParentTask(project, extension)
+        configureDeployableTask(project, extension)
+        configureLocalContainerTasks(project)
+    }
 
-		//System.out.println(container.resolve());
-	}
+    /**
+     * Configures parent task by setting convention properties that apply to all tasks.
+     *
+     * @param project Project
+     * @param extension Extension
+     */
+    private void configureParentTask(Project project, ArquillianPluginExtension extension) {
+        project.tasks.withType(ArquillianTask).whenTaskAdded { task ->
+            task.conventionMapping.map('arquillianClasspath') {
+                def config = project.configurations[ArquillianPluginExtension.EXTENSION_NAME]
 
-	public void run(Project project) {
+                if(config.dependencies.empty) {
+                    def container = ArquillianContainerRegistry.instance.getContainer(extension.container)
+                    logger.info "Using $extension.container.type '$extension.container.name' container with version '$extension.container.version'."
 
-		start(project);
-		deploy(project);
-		
-		try {
-			while(true) {
-				Thread.sleep(100);
-			}
-		}
-		catch (InterruptedException e) {
-			undeploy(project);
-			stop(project);
-			manager.fire(new StopContainer(container));
-		}
-	}
+                    project.dependencies {
+                        // Core Arquillian libraries
+                        arquillian 'org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final'
+                        arquillian 'org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final'
+                        arquillian 'org.jboss.shrinkwrap:shrinkwrap-impl-base:1.1.2'
 
-	public void start(Project project) {
-		Manager manager = initManager();
-		Container container = getDefaultContainer(manager);
-		
-		manager.fire(new SetupContainer(container));
-		manager.fire(new StartContainer(container));
-	}
-		
-	public void deploy(Project project) {
-		Manager manager = initManager();
-		Container container = getDefaultContainer(manager);
-		
-		Archive<?> deployment = null;
-		manager.fire(new DeployDeployment(container, getOrCreateDeployment(deployment)),
-			new NonManagedObserver<DeployDeployment>() {
-				@Inject
-				private Instance<ProtocolMetaData> metadataInst;
+                        // Container adapter libraries
+                        arquillian group: container.group_id, name: container.artifact_id, version: container.version
 
-				@Override
-				public void fired(DeployDeployment event) {
-					ProtocolMetaData metadata = metadataInst.get();
-					if (metadata != null) {
-						System.out.println(metadata);
-					}
-				}
-			});
-	}
+                        container.dependencies.each { dep ->
+                            arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
+                        }
+                    }
+                }
 
-	public void undeploy(Project project) {
-		Manager manager = initManager();
-		Container container = getDefaultContainer(manager);
-		
-		Archive<?> deployment = null;
-		manager.fire(new UnDeployDeployment(container, getOrCreateDeployment(deployment)));
- 	}
+                config
+            }
+            task.conventionMapping.map('config') { extension.container.config }
+            task.conventionMapping.map('debug') { extension.debug }
+        }
+    }
 
-	public void stop(Project project) {
-		Manager manager = initManager();
-		Container container = getDefaultContainer(manager);
+    /**
+     * Configures tasks that handle a deployable.
+     *
+     * @param project Project
+     * @param extension Extension
+     */
+    private void configureDeployableTask(Project project, ArquillianPluginExtension extension) {
+        project.tasks.withType(ArquillianDeployableTask).whenTaskAdded { task ->
+            task.conventionMapping.map('deployable') { getDeployable(project, extension) }
+        }
+    }
 
-		manager.fire(new StopContainer(container));
-	}
+    /**
+     * Adds and configures the tasks operating on a local Arquillian container.
+     *
+     * @param project Project
+     * @param extension Extension
+     */
+    private void configureLocalContainerTasks(Project project) {
+        project.task(START_TASK_NAME, type: ArquillianStart)
+        project.task(STOP_TASK_NAME, type: ArquillianStop)
+        project.task(DEPLOY_TASK_NAME, type: ArquillianDeploy, dependsOn: project.tasks.assemble)
+        project.task(UNDEPLOY_TASK_NAME, type: ArquillianUndeploy, dependsOn: project.tasks.assemble)
+        project.task(RUN_TASK_NAME, type: ArquillianRun, dependsOn: project.tasks.assemble)
+    }
 
-	private static Deployment getOrCreateDeployment(Archive<?> archive) {
-		if (contextMap.containsKey(archive)) {
-			return contextMap.remove(archive);
-		} else {
-			Deployment deployment = new Deployment(new DeploymentDescription("NO-NAME", archive));
-			contextMap.put(archive, deployment);
+    /**
+     * Gets the deployable artifact. The artifact is determined by the specific nature of the project e.g. if the project
+     * that applies the War plugin, assume that we want to to use the WAR archive.
+     *
+     * A deployable artifact can be provided by through the extension. If the extension defines a deployable, the project's
+     * artifact is not used.
+     *
+     * @param project Project
+     * @param extension Extension
+     * @return Deployable artifact
+     */
+    private File getDeployable(Project project, ArquillianPluginExtension extension) {
+        File deployable = extension.deployable
 
-			return deployment;
-		}
-	}
+        if(deployable) {
+            return deployable
+        }
+        else if(project.plugins.hasPlugin(WarPlugin)) {
+            return getArchiveByTaskName(project, WarPlugin.WAR_TASK_NAME)
+        }
+        else if(project.plugins.hasPlugin(EarPlugin)) {
+            return getArchiveByTaskName(project, EarPlugin.EAR_TASK_NAME)
+        }
+        else if(project.plugins.hasPlugin(JavaPlugin)) {
+            return getArchiveByTaskName(project, JavaPlugin.JAR_TASK_NAME)
+        }
+    }
 
-	public Manager initManager() {
-		if(manager == null) {
-			manager = ManagerBuilder.from().extension(LoadableExtensionLoader.class).create();
-			manager.start();
-		}
-		return manager;
-	}
-
-	public Container getDefaultContainer(Manager manager) {
-		ContainerRegistry registry = manager.resolve(ContainerRegistry.class);
-		return registry.getContainer(TargetDescription.DEFAULT);
-	}
-
-	static class ArquillianPluginExtension {
-		String name
-	}
+    /**
+     * Gets archive by task name.
+     *
+     * @param project Project
+     * @param taskName Task name
+     * @return Archive
+     */
+    private File getArchiveByTaskName(Project project, String taskName) {
+        project.tasks.getByName(taskName).archivePath
+    }
 }
