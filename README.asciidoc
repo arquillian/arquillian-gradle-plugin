@@ -1,0 +1,60 @@
+Gradle Arquillian plugin
+========================
+
+image:http://www.jboss.org/dms/jbossway/carousel_arquillian_logo.png[Arquillian Logo]
+
+Gradle plugin for handling container control and deployment lifecycle.
+
+== Usage
+
+To use the plugin, include in your build script:
+
+[source,groovy]
+----
+apply plugin: 'arquillian'
+----
+
+== Tasks
+
+The plugin defines the following tasks:
+
+[options="header"]
+|=======
+|Task name            |Depends on |Type                |Description
+|`arquillianStart`    |-          |ArquillianStart     |Starts a container.
+|`arquillianStop`     |-          |ArquillianStop      |Stops a running container.
+|`arquillianDeploy`   |`assemble` |ArquillianDeploy    |Deploys an archive to a container.
+|`arquillianUndeploy` |`assemble` |ArquillianUndeploy  |Undeploys an archive from a container.
+|`arquillianRun`      |`assemble` |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
+|=======
+
+
+== Extension properties
+
+The plugin defines the following extension properties in the `arquillian` closure:
+
+[options="header"]
+|=======
+|Property name |Type                |Default value                                     |Description
+|`debug`       |Boolean             |`false`                                           |Configures the Arquillian container to run in debug mode.
+|`deployable`  |File                |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
+|`container`   |ArquillianContainer |null                                              |The container to be used.
+|=======
+
+If no container is specified using the `container` property, an embedded Jetty container is used.
+
+=== Example
+
+[source,groovy]
+----
+arquillian {
+    debug = true
+    deployable = file('my/path/arbitraryWebApp.war')
+
+    container {
+        name = 'jetty'
+        version = '8'
+        type = 'embedded'
+        config = ['bindHttpPort': 8085, 'bindAddress': '127.0.0.1', 'jettyPlus': false]
+    }
+}
