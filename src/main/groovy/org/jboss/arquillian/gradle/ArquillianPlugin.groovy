@@ -15,13 +15,16 @@
  */
 package org.jboss.arquillian.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.plugins.ear.EarPlugin
 import org.jboss.arquillian.gradle.container.ArquillianContainerRegistry
-import org.jboss.arquillian.gradle.task.*
+import org.jboss.arquillian.gradle.task.ArquillianDeployableTask
+import org.jboss.arquillian.gradle.task.ArquillianTask
+import org.jboss.arquillian.gradle.task.ContainerTask
 
 /**
  * Arquillian plugin.
@@ -31,22 +34,16 @@ import org.jboss.arquillian.gradle.task.*
  */
 class ArquillianPlugin implements Plugin<Project> {
     static final String CONFIGURATION_NAME = 'arquillian'
-    static final String START_TASK_NAME = 'arquillianStart'
-    static final String STOP_TASK_NAME = 'arquillianStop'
-    static final String DEPLOY_TASK_NAME = 'arquillianDeploy'
-    static final String UNDEPLOY_TASK_NAME = 'arquillianUndeploy'
-    static final String RUN_TASK_NAME = 'arquillianRun'
 
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
         ArquillianPluginExtension extension = project.extensions.create(ArquillianPluginExtension.EXTENSION_NAME, ArquillianPluginExtension)
-        project.configurations.add(CONFIGURATION_NAME).setVisible(false).setTransitive(true)
+        project.configurations.create(CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                               .setDescription('The Arquillian libraries to be used for this project.')
 
-        configureParentTask(project, extension)
         configureDeployableTask(project, extension)
-        configureLocalContainerTasks(project)
+        configureLocalContainerTasks(project, extension)
     }
 
     /**
@@ -55,35 +52,33 @@ class ArquillianPlugin implements Plugin<Project> {
      * @param project Project
      * @param extension Extension
      */
-    private void configureParentTask(Project project, ArquillianPluginExtension extension) {
-        project.tasks.withType(ArquillianTask).whenTaskAdded { task ->
-            task.conventionMapping.map('arquillianClasspath') {
-                def config = project.configurations[ArquillianPluginExtension.EXTENSION_NAME]
+    private void configureTask(Project project, DefaultTask task, ArquillianPluginExtension extension, ArquillianContainer containerConfig) {
+        task.conventionMapping.map('arquillianClasspath') {
+            def config = project.configurations[CONFIGURATION_NAME]
 
-                if(config.dependencies.empty) {
-                    def container = ArquillianContainerRegistry.instance.getContainer(extension.container)
-                    logger.info "Using $extension.container.type '$extension.container.name' container with version '$extension.container.version'."
+            if(config.dependencies.empty) {
+                def container = ArquillianContainerRegistry.instance.getContainer(containerConfig)
 
-                    project.dependencies {
-                        // Core Arquillian libraries
-                        arquillian 'org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final'
-                        arquillian 'org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final'
-                        arquillian 'org.jboss.shrinkwrap:shrinkwrap-impl-base:1.1.2'
+                project.dependencies {
+                    // Core Arquillian libraries
+                    arquillian 'org.jboss.arquillian.core:arquillian-core-impl-base:1.0.3.Final'
+                    arquillian 'org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final'
+                    arquillian 'org.jboss.shrinkwrap:shrinkwrap-impl-base:1.1.2'
 
-                        // Container adapter libraries
-                        arquillian group: container.group_id, name: container.artifact_id, version: container.version
+                    // Container adapter libraries
+                    arquillian group: container.group_id, name: container.artifact_id, version: container.version
 
-                        container.dependencies.each { dep ->
-                            arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
-                        }
+                    container.dependencies.each { dep ->
+                        arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
                     }
                 }
-
-                config
             }
-            task.conventionMapping.map('config') { extension.container.config }
-            task.conventionMapping.map('debug') { extension.debug }
+
+            config
         }
+        task.conventionMapping.map('containerName') { containerConfig.name }
+        task.conventionMapping.map('config') { containerConfig.config }
+        task.conventionMapping.map('debug') { extension.debug }
     }
 
     /**
@@ -104,12 +99,25 @@ class ArquillianPlugin implements Plugin<Project> {
      * @param project Project
      * @param extension Extension
      */
-    private void configureLocalContainerTasks(Project project) {
-        project.task(START_TASK_NAME, type: ArquillianStart)
-        project.task(STOP_TASK_NAME, type: ArquillianStop)
-        project.task(DEPLOY_TASK_NAME, type: ArquillianDeploy, dependsOn: project.tasks.assemble)
-        project.task(UNDEPLOY_TASK_NAME, type: ArquillianUndeploy, dependsOn: project.tasks.assemble)
-        project.task(RUN_TASK_NAME, type: ArquillianRun, dependsOn: project.tasks.assemble)
+    private void configureLocalContainerTasks(Project project, ArquillianPluginExtension extension) {
+        project.afterEvaluate {
+            // If no container is added by the user, provide the default container.
+            if(extension.containers.isEmpty()) {
+                extension.containers << new ArquillianContainer()
+            }
+
+            extension.containers.each { containerConfig ->
+                project.logger.info "Using $containerConfig.type '$containerConfig.name' container with version '$containerConfig.version'."
+
+                String containerName = containerConfig.name.capitalize()
+                String containerVersion = containerConfig.version
+
+                ContainerTask.values().each {
+                    ArquillianTask task = it.createTask(project, containerName, containerVersion)
+                    configureTask(project, task, extension, containerConfig)
+                }
+            }
+        }
     }
 
     /**

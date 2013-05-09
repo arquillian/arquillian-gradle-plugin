@@ -20,12 +20,12 @@ The plugin defines the following tasks:
 
 [options="header"]
 |=======
-|Task name            |Depends on |Type                |Description
-|`arquillianStart`    |-          |ArquillianStart     |Starts a container.
-|`arquillianStop`     |-          |ArquillianStop      |Stops a running container.
-|`arquillianDeploy`   |`assemble` |ArquillianDeploy    |Deploys an archive to a container.
-|`arquillianUndeploy` |`assemble` |ArquillianUndeploy  |Undeploys an archive from a container.
-|`arquillianRun`      |`assemble` |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
+|Task name                           |Depends on |Type                |Description
+|`arquillianStart<ContainerName>`    |-          |ArquillianStart     |Starts a container.
+|`arquillianStop<ContainerName>`     |-          |ArquillianStop      |Stops a running container.
+|`arquillianDeploy<ContainerName>`   |`assemble` |ArquillianDeploy    |Deploys an archive to a container.
+|`arquillianUndeploy<ContainerName>` |`assemble` |ArquillianUndeploy  |Undeploys an archive from a container.
+|`arquillianRun<ContainerName>`      |`assemble` |ArquillianRun       |Starts the container, deploys an archive to it and waits until the user presses `CTRL + C` to stop.
 |=======
 
 
@@ -35,10 +35,10 @@ The plugin defines the following extension properties in the `arquillian` closur
 
 [options="header"]
 |=======
-|Property name |Type                |Default value                                     |Description
-|`debug`       |Boolean             |`false`                                           |Configures the Arquillian container to run in debug mode.
-|`deployable`  |File                |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
-|`container`   |ArquillianContainer |null                                              |The container to be used.
+|Property name |Type                      |Default value                                     |Description
+|`debug`       |Boolean                   |`false`                                           |Configures the Arquillian container to run in debug mode.
+|`deployable`  |File                      |WAR, EAR or JAR file depending on applied plugins |The deployable artifact. This can be a WAR, EAR or JAR file.
+|`containers`  |List<ArquillianContainer> |default container                                 |The containers to be used.
 |=======
 
 If no container is specified using the `container` property, an embedded Jetty container is used.
@@ -56,5 +56,11 @@ arquillian {
         version = '8'
         type = 'embedded'
         config = ['bindHttpPort': 8085, 'bindAddress': '127.0.0.1', 'jettyPlus': false]
+    }
+
+    container {
+        name = 'glassfish'
+        version = '3'
+        type = 'embedded'
     }
 }

@@ -39,9 +39,9 @@ class ArquillianPluginExtension {
     File deployable
 
     /**
-     * Configuration options for a specific Arquillian container.
+     * Configuration options for a specific Arquillian containers.
      */
-    ArquillianContainer container = new ArquillianContainer()
+    List<ArquillianContainer> containers = new ArrayList<ArquillianContainer>()
 
     /**
      * Configures container configuration options. The specified closure
@@ -50,7 +50,9 @@ class ArquillianPluginExtension {
      * @param config Configuration
      */
     void container(Closure config) {
-        ConfigureUtil.configure(config, container)
+        ArquillianContainer container = new ArquillianContainer()
+        containers << container
+        ConfigureUtil.configure(config, container, Closure.DELEGATE_FIRST)
     }
 }
 

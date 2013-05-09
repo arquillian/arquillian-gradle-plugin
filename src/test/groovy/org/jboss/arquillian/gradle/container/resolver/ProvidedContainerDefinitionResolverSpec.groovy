@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.gradle.task
+package org.jboss.arquillian.gradle.container.resolver
+
+import spock.lang.Specification
 
 /**
- * Arquillian start task.
+ * Provided container defintion resolver unit test.
  *
  * @author Benjamin Muschko
- * @author Aslak Knutsen
  */
-class ArquillianStart extends ArquillianTask {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    void validateConfiguration() {}
+class ProvidedContainerDefinitionResolverSpec extends Specification {
+    ContainerDefinitionResolver containerDefinitionResolver
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    void perform() {
-        logger.info 'Starting Arquillian container.'
-        containerManager.setup()
-        containerManager.start()
+    def setup() {
+        containerDefinitionResolver = new ProvidedContainerDefinitionResolver()
+    }
+
+    def "Successfully resolves provided container JSON file"() {
+        when:
+            Reader reader = containerDefinitionResolver.resolve()
+        then:
+            reader
     }
 }

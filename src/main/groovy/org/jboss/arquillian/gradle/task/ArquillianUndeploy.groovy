@@ -22,10 +22,6 @@ package org.jboss.arquillian.gradle.task
  * @author Aslak Knutsen
  */
 class ArquillianUndeploy extends ArquillianDeployableTask {
-    ArquillianUndeploy() {
-        super('Undeploys an archive from Arquillian container.')
-    }
-
     /**
      * {@inheritDoc}
      */

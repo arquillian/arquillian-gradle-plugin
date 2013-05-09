@@ -22,10 +22,6 @@ package org.jboss.arquillian.gradle.task
  * @author Aslak Knutsen
  */
 class ArquillianStop extends ArquillianTask {
-    ArquillianStop() {
-        super('Stops Arquillian container.')
-    }
-
     /**
      * {@inheritDoc}
      */

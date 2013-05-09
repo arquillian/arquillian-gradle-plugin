@@ -35,7 +35,7 @@ import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContex
  */
 abstract class ArquillianTask extends DefaultTask {
     static final String TASK_GROUP = 'Arquillian'
-    static final String CONTAINER_PROFILE_NAME = 'gradle_container'
+    static final String CONTAINER_PROFILE_PREFIX = 'gradle_container'
     protected ContainerManager containerManager
 
     /**
@@ -45,10 +45,16 @@ abstract class ArquillianTask extends DefaultTask {
     FileCollection arquillianClasspath
 
     /**
+     * Arquillian container name needed to set the correct configuration properties via the profile.
+     */
+    @Input
+    String containerName
+
+    /**
      * Defines the configuration options for a container.
      */
     @Input
-    Map<String, Object> config
+    Map<String, Object> config = [:]
 
     /**
      * Flag that indicates if Arquillian should be run in debug mode.
@@ -56,8 +62,7 @@ abstract class ArquillianTask extends DefaultTask {
     @Input
     Boolean debug
 
-    ArquillianTask(String description) {
-        this.description = description
+    ArquillianTask() {
         group = TASK_GROUP
     }
 
@@ -90,11 +95,12 @@ abstract class ArquillianTask extends DefaultTask {
 
         // Defines a launch profile to set container configuration
         if(getConfig().size() > 0) {
-            System.setProperty(ArquillianSystemProperty.LAUNCH.propName, CONTAINER_PROFILE_NAME)
+            String launchProfile = "${CONTAINER_PROFILE_PREFIX}_${containerName}"
+            System.setProperty(ArquillianSystemProperty.LAUNCH.propName, launchProfile)
 
             getConfig().each { key, value ->
                 logger.info "Setting configuration property '$key' with value '$value'."
-                System.setProperty("arq.container.${CONTAINER_PROFILE_NAME}.configuration.$key", value.toString())
+                System.setProperty("arq.container.${launchProfile}.configuration.$key", value.toString())
             }
         }
     }

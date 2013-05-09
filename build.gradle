@@ -12,29 +12,51 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
     testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
-
-    ext.arquillianVersion = '1.0.3.Final'
-    testCompile "org.jboss.arquillian.core:arquillian-core-impl-base:$arquillianVersion"
-    testCompile "org.jboss.arquillian.container:arquillian-container-impl-base:$arquillianVersion"
 }
+
+sourceSets {
+    integrationTest {
+        groovy.srcDir file('src/integTest/groovy')
+        resources.srcDir file('src/integTest/resources')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+check.dependsOn integrationTest
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.5'
+    gradleVersion = '1.6'
 }
 
-idea.project {
-    jdkName = '1.6'
+idea {
+    project {
+        jdkName = '1.6'
 
-    ipr.withXml { provider ->
-        def node = provider.asNode()
+        ipr.withXml { provider ->
+            def node = provider.asNode()
 
-        // Use GIT
-        def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
-        vcsConfig.mapping[0].'@vcs' = 'Git'
+            // Use GIT
+            def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+            vcsConfig.mapping[0].'@vcs' = 'Git'
 
-        // Set Gradle home
-        def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
-        gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
-        gradleSettings.appendNode('option', [name: 'linkedProjectPath', value: '$PROJECT_DIR$/build.gradle'])
+            // Set Gradle home
+            def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
+            gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
+            gradleSettings.appendNode('option', [name: 'linkedProjectPath', value: '$PROJECT_DIR$/build.gradle'])
+        }
+    }
+
+    module {
+        sourceSets.integrationTest.allSource.srcDirs.each {
+            testSourceDirs += it
+        }
     }
 }

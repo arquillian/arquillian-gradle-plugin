@@ -607,12 +607,16 @@
         "dependencies":[
             {
                 "artifact_id":"glassfish-embedded-all",
-                "group_id":"org.glassfish.extras"
+                "group_id":"org.glassfish.extras",
+                "version":"3.1"
             }
         ],
         "artifact_id":"arquillian-glassfish-embedded-3.1",
         "group_id":"org.jboss.arquillian.container",
         "name":"Arquillian Container GlassFish Embedded 3.1",
+        "version":"1.0.0.CR4",
+        "containerName":"glassfish",
+        "containerVersion":"3",
         "containerType":"EMBEDDED",
         "configurations":[
             {

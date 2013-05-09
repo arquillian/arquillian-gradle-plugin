@@ -22,10 +22,6 @@ package org.jboss.arquillian.gradle.task
  * @author Aslak Knutsen
  */
 class ArquillianRun extends ArquillianDeployableTask {
-    ArquillianRun() {
-        super('Runs Arquillian container.')
-    }
-
     /**
      * {@inheritDoc}
      */

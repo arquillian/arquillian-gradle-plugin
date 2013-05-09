@@ -31,10 +31,6 @@ abstract class ArquillianDeployableTask extends ArquillianTask {
     @InputFile
     File deployable
 
-    ArquillianDeployableTask(String description) {
-        super(description)
-    }
-
     /**
      * {@inheritDoc}
      */
