@@ -39,7 +39,9 @@ class ArquillianContainerRegistrySpec extends Specification {
 
     def "Get container for provided container definition"() {
         given:
-            ArquillianContainer containerConfig = new ArquillianContainer(name: 'glassfish', version: '3', type: 'embedded')
+            ArquillianContainer containerConfig = new ArquillianContainer('glassfish')
+            containerConfig.version = '3'
+            containerConfig.type = 'embedded'
         when:
             def containerJson = ArquillianContainerRegistry.instance.getContainer(containerConfig)
         then:
@@ -51,7 +53,9 @@ class ArquillianContainerRegistrySpec extends Specification {
 
     def "Get container for container that is not available in registry"() {
         given:
-            ArquillianContainer containerConfig = new ArquillianContainer(name: 'dubiousContainer', version: '1', type: 'embedded')
+            ArquillianContainer containerConfig = new ArquillianContainer('dubiousContainer')
+            containerConfig.version = '1'
+            containerConfig.type =  'embedded'
         when:
             ArquillianContainerRegistry.instance.getContainer(containerConfig)
         then:
@@ -60,7 +64,9 @@ class ArquillianContainerRegistrySpec extends Specification {
 
     def "Get container for invalid container type"() {
         given:
-            ArquillianContainer containerConfig = new ArquillianContainer(name: 'dubiousContainer', version: '1', type: 'unknown')
+            ArquillianContainer containerConfig = new ArquillianContainer('dubiousContainer')
+            containerConfig.version = '1'
+            containerConfig.type = 'unknown'
         when:
             ArquillianContainerRegistry.instance.getContainer(containerConfig)
         then:

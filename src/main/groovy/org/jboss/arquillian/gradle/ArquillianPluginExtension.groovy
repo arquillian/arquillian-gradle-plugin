@@ -15,8 +15,7 @@
  */
 package org.jboss.arquillian.gradle
 
-import org.gradle.util.ConfigureUtil
-import org.jboss.arquillian.gradle.container.ContainerType
+import org.gradle.api.NamedDomainObjectContainer
 
 /**
  * Arquillian plugin extension.
@@ -26,6 +25,15 @@ import org.jboss.arquillian.gradle.container.ContainerType
  */
 class ArquillianPluginExtension {
     static final String EXTENSION_NAME = 'arquillian'
+
+    /**
+     * The list of containers to be registered.
+     */
+    final NamedDomainObjectContainer<ArquillianContainer> containers
+
+    ArquillianPluginExtension(NamedDomainObjectContainer<ArquillianContainer> containers) {
+        this.containers = containers
+    }
 
     /**
      * Configures the Arquillian container to run in debug mode. The debug mode gives you more detailed information
@@ -39,44 +47,13 @@ class ArquillianPluginExtension {
     File deployable
 
     /**
-     * Configuration options for a specific Arquillian containers.
-     */
-    List<ArquillianContainer> containers = new ArrayList<ArquillianContainer>()
-
-    /**
-     * Configures container configuration options. The specified closure
-     * delegates to an instance of {@link ArquillianContainer}.
+     * Configures containers of type {@link ArquillianContainer}.
      *
      * @param config Configuration
      */
-    void container(Closure config) {
-        ArquillianContainer container = new ArquillianContainer()
-        containers << container
-        ConfigureUtil.configure(config, container, Closure.DELEGATE_FIRST)
+    void containers(Closure config) {
+        containers.configure(config)
     }
 }
 
-/**
- * Configuration options for an Arquillian container.
- */
-class ArquillianContainer {
-    /**
-     * The container name.
-     */
-    String name = 'jetty'
 
-    /**
-     * The container version.
-     */
-    String version = '8'
-
-    /**
-     * The type of container e.g. embedded, managed or remote.
-     */
-    String type = ContainerType.EMBEDDED.identifier
-
-    /**
-     * The container configuration deviating from the default settings.
-     */
-    Map<String, Object> config = new HashMap<String, Object>()
-}

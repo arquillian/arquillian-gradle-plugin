@@ -84,10 +84,11 @@ class ArquillianPluginIntegSpec extends Specification {
                             apply plugin: 'arquillian'
 
                             arquillian {
-                                container {
-                                    name = 'tomcat'
-                                    version = '7'
-                                    type = 'embedded'
+                                containers {
+                                    tomcat {
+                                        version = '7'
+                                        type = 'embedded'
+                                    }
                                 }
                             }
                          """
@@ -123,16 +124,16 @@ class ArquillianPluginIntegSpec extends Specification {
                             apply plugin: 'arquillian'
 
                             arquillian {
-                                container {
-                                    name = 'tomcat'
-                                    version = '7'
-                                    type = 'embedded'
-                                }
+                                containers {
+                                    tomcat {
+                                        version = '7'
+                                        type = 'embedded'
+                                    }
 
-                                container {
-                                    name = 'glassfish'
-                                    version = '3'
-                                    type = 'embedded'
+                                    glassfish {
+                                        version = '3'
+                                        type = 'embedded'
+                                    }
                                 }
                             }
                          """

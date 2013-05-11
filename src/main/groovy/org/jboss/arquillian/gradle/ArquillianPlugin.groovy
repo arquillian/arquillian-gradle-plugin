@@ -38,7 +38,8 @@ class ArquillianPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
-        ArquillianPluginExtension extension = project.extensions.create(ArquillianPluginExtension.EXTENSION_NAME, ArquillianPluginExtension)
+        def containers = project.container(ArquillianContainer)
+        ArquillianPluginExtension extension = project.extensions.create(ArquillianPluginExtension.EXTENSION_NAME, ArquillianPluginExtension, containers)
         project.configurations.create(CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                               .setDescription('The Arquillian libraries to be used for this project.')
 
