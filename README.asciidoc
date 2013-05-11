@@ -41,7 +41,7 @@ The plugin defines the following extension properties in the `arquillian` closur
 |`containers`  |NamedDomainObjectContainer<ArquillianContainer> |default container                                 |The containers to be used.
 |=======
 
-If no container is specified using the `container` property, an embedded Jetty container is used.
+If no container is specified using the `containers` property, an embedded Jetty container is used.
 
 === Example
 
