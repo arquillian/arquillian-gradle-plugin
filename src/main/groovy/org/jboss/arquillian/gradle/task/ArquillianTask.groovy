@@ -23,9 +23,9 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.jboss.arquillian.gradle.utils.ArquillianContainerManager
 import org.jboss.arquillian.gradle.utils.ArquillianSystemProperty
+import org.jboss.arquillian.gradle.utils.ArquillianThreadContextClassLoader
 import org.jboss.arquillian.gradle.utils.ContainerManager
-
-import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContextClassLoader
+import org.jboss.arquillian.gradle.utils.ThreadContextClassLoader
 
 /**
  * Arquillian parent task.
@@ -36,7 +36,8 @@ import static org.jboss.arquillian.gradle.utils.ArquillianUtils.withThreadContex
 abstract class ArquillianTask extends DefaultTask {
     static final String TASK_GROUP = 'Arquillian'
     static final String CONTAINER_PROFILE_PREFIX = 'gradle_container'
-    protected ContainerManager containerManager
+    ThreadContextClassLoader threadContextClassLoader
+    ContainerManager containerManager
 
     /**
      * Arquillian classpath including the core libraries and container adapter libraries.
@@ -64,17 +65,19 @@ abstract class ArquillianTask extends DefaultTask {
 
     ArquillianTask() {
         group = TASK_GROUP
+        threadContextClassLoader = new ArquillianThreadContextClassLoader()
+        containerManager = new ArquillianContainerManager()
     }
 
     @TaskAction
-    void run() {
+    void start() {
         validateConfiguration()
         logger.info 'Configuring Arquillian container.'
         initSystemProperties()
 
-        withThreadContextClassLoader(getArquillianClasspath().files) {
+        threadContextClassLoader.withClasspath(getArquillianClasspath().files) {
             try {
-                containerManager = new ArquillianContainerManager()
+                containerManager.init()
                 perform()
             }
             catch(Exception e) {
@@ -95,7 +98,7 @@ abstract class ArquillianTask extends DefaultTask {
 
         // Defines a launch profile to set container configuration
         if(getConfig().size() > 0) {
-            String launchProfile = "${CONTAINER_PROFILE_PREFIX}_${containerName}"
+            String launchProfile = "${CONTAINER_PROFILE_PREFIX}_${getContainerName()}"
             System.setProperty(ArquillianSystemProperty.LAUNCH.propName, launchProfile)
 
             getConfig().each { key, value ->

@@ -36,7 +36,7 @@ abstract class ArquillianDeployableTask extends ArquillianTask {
      */
     @Override
     void validateConfiguration() {
-        if(!getDeployable().exists()) {
+        if(getDeployable() && !getDeployable().exists()) {
             throw new InvalidUserDataException("The provided deployable file '${getDeployable().canonicalPath}' does not exist.")
         }
         else {

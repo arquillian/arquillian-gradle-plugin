@@ -16,43 +16,16 @@
 package org.jboss.arquillian.gradle.utils
 
 /**
- * Container manager interface.
+ * Thread context class loader.
  *
  * @author Benjamin Muschko
- * @author Aslak Knutsen
  */
-interface ContainerManager {
+interface ThreadContextClassLoader {
     /**
-     * Initializes manager.
-     */
-    void init()
-
-    /**
-     * Sets up container.
-     */
-    void setup()
-
-    /**
-     * Starts container.
-     */
-    void start()
-
-    /**
-     * Stops container.
-     */
-    void stop()
-
-    /**
-     * Deploys artifact to container.
+     * Performs the closure with local thread context classloader.
      *
-     * @param deployable Deployable
+     * @param classpathFiles Classpath files
+     * @param closure the given closure
      */
-    void deploy(File deployable)
-
-    /**
-     * Undeploying artifact from container.
-     *
-     * @param deployable Deployable
-     */
-    void undeploy(File deployable)
+    void withClasspath(Set<File> classpathFiles, Closure closure)
 }

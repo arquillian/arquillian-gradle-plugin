@@ -19,8 +19,6 @@ import groovy.util.logging.Slf4j
 
 import java.lang.reflect.Constructor
 
-import static org.jboss.arquillian.gradle.utils.ArquillianUtils.loadClass
-
 /**
  * Arquillian container manager that provides useful and reoccuring operations.
  *
@@ -33,7 +31,8 @@ class ArquillianContainerManager implements ContainerManager {
     private container
     private contextMap = [:]
 
-    ArquillianContainerManager() {
+    @Override
+    void init() {
         initManager()
         createDefaultContainer()
     }
@@ -154,5 +153,16 @@ class ArquillianContainerManager implements ContainerManager {
         def deployment = deploymentConstructor.newInstance(deploymentDescription)
         contextMap.put(archive, deployment)
         deployment
+    }
+
+    /**
+     * Loads given class from thread context classloader.
+     *
+     * @param className Class name
+     * @return Loaded class
+     */
+    private Class loadClass(String className) {
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        classLoader.loadClass(className)
     }
 }

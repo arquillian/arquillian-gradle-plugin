@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2013 the original author or authors.
  *
@@ -20,18 +19,16 @@ import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.UncheckedIOException
 
 /**
- * Arquillian utilities.
+ * Arquillian thread context class loader.
  *
  * @author Benjamin Muschko
  */
-class ArquillianUtils {
+class ArquillianThreadContextClassLoader implements ThreadContextClassLoader {
     /**
-     * Performs the closure with local thread context classloader.
-     *
-     * @param classpathFiles Classpath files
-     * @param closure the given closure
+     * {@inheritDoc}
      */
-    static void withThreadContextClassLoader(Set<File> classpathFiles, Closure closure) {
+    @Override
+    void withClasspath(Set<File> classpathFiles, Closure closure) {
         ClassLoader originalClassLoader = getClass().classLoader
 
         try {
@@ -50,7 +47,7 @@ class ArquillianUtils {
      * @param classpathFiles Classpath files
      * @return URL classloader
      */
-    private static URLClassLoader createClassLoader(Set<File> classpathFiles) {
+    private URLClassLoader createClassLoader(Set<File> classpathFiles) {
         ClassLoader rootClassLoader = new AntClassLoader(getClass().classLoader, false)
         new URLClassLoader(toURLArray(classpathFiles), rootClassLoader)
     }
@@ -61,7 +58,7 @@ class ArquillianUtils {
      * @param files Files
      * @return URL array
      */
-    private static URL[] toURLArray(Set<File> files) {
+    private URL[] toURLArray(Set<File> files) {
         List<URL> urls = new ArrayList<URL>(files.size())
 
         files.each { file ->
@@ -74,16 +71,5 @@ class ArquillianUtils {
         }
 
         urls.toArray(new URL[urls.size()])
-    }
-
-    /**
-     * Loads given class from thread context classloader.
-     *
-     * @param className Class name
-     * @return Loaded class
-     */
-    static Class loadClass(String className) {
-        ClassLoader classLoader = Thread.currentThread().contextClassLoader
-        classLoader.loadClass(className)
     }
 }
