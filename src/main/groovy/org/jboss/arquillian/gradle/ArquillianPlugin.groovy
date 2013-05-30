@@ -66,11 +66,26 @@ class ArquillianPlugin implements Plugin<Project> {
                     arquillian 'org.jboss.arquillian.container:arquillian-container-impl-base:1.0.3.Final'
                     arquillian 'org.jboss.shrinkwrap:shrinkwrap-impl-base:1.1.2'
 
-                    // Container adapter libraries
-                    arquillian group: container.group_id, name: container.artifact_id, version: container.version
+                    // Container adapter library
+                    if(!containerConfig.dependencies.adapter.isEmpty()) {
+                        containerConfig.dependencies.adapter.each { dep ->
+                            arquillian dep
+                        }
+                    }
+                    else {
+                        arquillian group: container.group_id, name: container.artifact_id, version: container.version
+                    }
 
-                    container.dependencies.each { dep ->
-                        arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
+                    // Additional container libraries
+                    if(!containerConfig.dependencies.container.isEmpty()) {
+                        containerConfig.dependencies.container.each { dep ->
+                            arquillian dep
+                        }
+                    }
+                    else {
+                        container.dependencies.each { dep ->
+                            arquillian group: dep.group_id, name: dep.artifact_id, version: dep.version
+                        }
                     }
                 }
             }

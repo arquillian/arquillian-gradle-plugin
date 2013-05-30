@@ -56,6 +56,12 @@ arquillian {
             version = '8'
             type = 'embedded'
             config = ['bindHttpPort': 8085, 'bindAddress': '127.0.0.1', 'jettyPlus': false]
+
+            dependencies {
+                adapter 'org.jboss.arquillian.container:arquillian-jetty-embedded-7:1.0.0.CR2'
+                container 'org.eclipse.jetty:jetty-webapp:8.1.11.v20130520'
+                container group: 'org.eclipse.jetty', name: 'jetty-plus', version: '8.1.11.v20130520'
+            }
         }
 
         glassfish {
