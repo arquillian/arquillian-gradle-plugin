@@ -11,6 +11,16 @@ To use the plugin, include in your build script:
 
 [source,groovy]
 ----
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.jboss.arquillian.gradle:arquillian-gradle-plugin:0.1'
+    }
+}
+
 apply plugin: 'arquillian'
 ----
 
