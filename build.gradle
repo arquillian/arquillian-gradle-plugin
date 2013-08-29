@@ -1,8 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'http://jcenter.bintray.com' }
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+    }
+}
+
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: 'bintray'
 
 version = '0.1'
+group = 'org.jboss.arquillian.gradle'
 
 repositories {
     mavenCentral()
@@ -32,6 +45,53 @@ task integrationTest(type: Test) {
 
 check.dependsOn integrationTest
 
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier 'groovydoc'
+    from groovydoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives groovydocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact groovydocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Gradle Arquillian plugin')
+                root.appendNode('description', 'Gradle Plugin for handling Container control and deployment lifecycle.')
+                root.appendNode('inceptionYear', '2013')
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache Software License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                license.appendNode('distribution', 'repo')
+
+                def developers = root.appendNode('developers')
+                def aslakknutsen = developers.appendNode('developer')
+                aslakknutsen.appendNode('id', 'aslakknutsen')
+                aslakknutsen.appendNode('name', 'Aslak Knutsen')
+                aslakknutsen.appendNode('email', 'aslak@4fs.no')
+                def bmuschko = developers.appendNode('developer')
+                bmuschko.appendNode('id', 'bmuschko')
+                bmuschko.appendNode('name', 'Benjamin Muschko')
+                bmuschko.appendNode('email', 'benjamin.muschko@gmail.com')
+            }
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '1.6'
 }
@@ -58,5 +118,18 @@ idea {
         sourceSets.integrationTest.allSource.srcDirs.each {
             testSourceDirs += it
         }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : null
+    key =  project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : null
+    publications = ['mavenJava']
+
+    pkg {
+        repo = 'Arquillian'
+        userOrg = 'arquillian'
+        name = 'arquillian-gradle-plugin'
+        licenses = ['Apache-2.0']
     }
 }
